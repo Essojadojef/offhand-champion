@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/heal_sine.wav-9743ef350a122d2a815f48fcb9b7b149.sample"
+
+[deps]
+
+source_file="res://combomancy/sounds/heal_sine.wav"
+dest_files=[ "res://.import/heal_sine.wav-9743ef350a122d2a815f48fcb9b7b149.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

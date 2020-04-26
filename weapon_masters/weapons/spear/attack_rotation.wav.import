@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/attack_rotation.wav-d9b823483368098be4b87280c8d0ebb2.sample"
+
+[deps]
+
+source_file="res://weapon_masters/weapons/spear/attack_rotation.wav"
+dest_files=[ "res://.import/attack_rotation.wav-d9b823483368098be4b87280c8d0ebb2.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/repeat_attack.wav-cef6fe820b310f563b3c9f2a96259c1c.sample"
+
+[deps]
+
+source_file="res://weapon_masters/weapons/sword/repeat_attack.wav"
+dest_files=[ "res://.import/repeat_attack.wav-cef6fe820b310f563b3c9f2a96259c1c.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

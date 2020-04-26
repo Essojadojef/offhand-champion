@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var enemy_max = 2
+
+export var stage_scene : PackedScene
+var stage : Node2D
+
+var ledges = []
+var occupied_ledges = []
+
+var ground = []
+
+func _ready():
+	
+	# laod stage
+	if stage_scene:
+		load_stage(stage_scene)
+	else:
+		load_stage(load(\"res://stages/plain/plain.tscn\"))
+	
+
+func add_player(controller: Globals.Player): # called by a parent
+	var node = load(\"res://weapon_masters/player/player.tscn\").instance()
+	
+	node.controller = controller
+	
+	var position = Vector2() #spawnpoints.pop_front()
+	node.position = position
+	node.spawn_point = position
+	
+	add_child(node)
+	controller.focus = node
+
+\"\"\"func _on_EnemySpawnTimer_timeout():
+	var enemy_count = get_tree().get_nodes_in_group(\"enemies\").size()
+	if enemy_count < enemy_max :
+		
+		var enemy
+		
+		if enemy_count >= 2 and get_tree().get_nodes_in_group(\"power-ups\").empty() and randf() < 0.25 :
+			enemy = get_random_power_up()
+		else :
+			enemy = preload(\"res://combomancy/entities/enemy.tscn\").instance()
+		
+		enemy.position = get_random_spawnpoint()
+		
+		add_child( enemy )\"\"\"
+
+func _on_EnemyIncreaseTimer_timeout():
+	enemy_max += 1
+	#_on_EnemySpawnTimer_timeout()
+
+
+func get_random_power_up():
+	var power_ups = [\"health_container\", \"item_container\"]
+	var path = \"res://entities/power_ups/%s.tscn\" % power_ups[randi() % power_ups.size()]
+	return load(path).instance()
+
+
+
+func load_stage(packed_scene: PackedScene):
+	if stage:
+		remove_child(stage)
+		stage.queue_free()
+	
+	stage = packed_scene.instance()
+	
+	add_child(stage, true)
+	
+
+
+func get_random_spawnpoint() :
+	var spawnpoints = stage.get_spawnpoints()
+	return spawnpoints[randi() % spawnpoints.size()].position
+"
+
+[node name="World" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="EnemySpawnTimer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 8.0
+
+[node name="EnemyIncreaseTimer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 40.0
+[connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_EnemySpawnTimer_timeout"]
+[connection signal="timeout" from="EnemyIncreaseTimer" to="." method="_on_EnemyIncreaseTimer_timeout"]

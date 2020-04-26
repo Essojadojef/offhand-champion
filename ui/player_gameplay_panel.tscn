@@ -1,0 +1,179 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://ui/health.png" type="Texture" id=1]
+[ext_resource path="res://ui/super_1.png" type="Texture" id=2]
+
+
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Panel
+
+var controller
+
+func _ready() -> void:
+	var viewport = get_tree().root.find_node(\"MainViewport\", true, false)
+	$ViewportContainer/Viewport.world_2d = viewport.world_2d
+	#set_process(false)
+	#set_physics_process(false)
+
+func _physics_process(delta: float) -> void:
+	$ViewportContainer/Viewport/Camera2D.position = controller.focus.position
+	
+	var player = controller.focus as PlayerEntity
+	if !player: return
+	
+	$Health.value = player.health / player.max_health * $Health.max_value
+	$Lives/Label.text = str(player.lives)
+	
+	#if get_player_entity().weapons[0]:
+	$Weapon1.show()
+	$Weapon1.text = player.get_weapon_node(0).name
+	#else:
+	#	$Weapon1.hide()
+	
+	#if get_player_entity().weapons[1]:
+	$Weapon2.show()
+	$Weapon2.text = player.get_weapon_node(1).name
+	#else:
+	#	$Weapon2.hide()
+	
+
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.815686, 0.054902, 0.054902, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0, 0, 1 )
+expand_margin_left = 1.0
+expand_margin_right = 1.0
+expand_margin_top = 1.0
+expand_margin_bottom = 1.0
+
+[node name="Panel" type="Panel"]
+margin_right = 120.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 160, 240 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -25.5
+margin_right = 25.5
+margin_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Player 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weapon1" type="Label" parent="."]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -47.0
+margin_right = 51.0
+margin_bottom = -33.0
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "W1"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weapon2" type="Label" parent="."]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = 33.0
+margin_right = 51.0
+margin_bottom = 47.0
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "W2"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 140, 220 )
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="Camera2D" type="Camera2D" parent="ViewportContainer/Viewport"]
+current = true
+
+[node name="Health" type="ProgressBar" parent="."]
+anchor_right = 1.0
+margin_left = 24.0
+margin_top = -24.0
+margin_right = 8.0
+margin_bottom = -8.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+value = 1.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Lives" type="TextureRect" parent="."]
+margin_left = -8.0
+margin_top = -32.0
+margin_right = 24.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Lives"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "3"
+align = 1
+valign = 1
+
+[node name="TextureProgress" type="TextureProgress" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -64.0
+margin_top = -80.0
+margin_right = 64.0
+margin_bottom = -16.0
+value = 30.0
+texture_under = ExtResource( 2 )
+texture_progress = ExtResource( 2 )
+tint_under = Color( 0.501961, 0.25098, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

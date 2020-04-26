@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/up.wav-c05d9fdd93b92dbad0c761d684f1d64a.sample"
+
+[deps]
+
+source_file="res://combomancy/sounds/up.wav"
+dest_files=[ "res://.import/up.wav-c05d9fdd93b92dbad0c761d684f1d64a.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

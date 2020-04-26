@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/attack_heavy.wav-39d7ee0c82fa64222ba9cb7b876d6f50.sample"
+
+[deps]
+
+source_file="res://weapon_masters/weapons/spear/attack_heavy.wav"
+dest_files=[ "res://.import/attack_heavy.wav-39d7ee0c82fa64222ba9cb7b876d6f50.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

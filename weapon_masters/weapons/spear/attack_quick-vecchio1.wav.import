@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/attack_quick-vecchio1.wav-58ebc3ce051e54f02ee9e08967a4bc19.sample"
+
+[deps]
+
+source_file="res://weapon_masters/weapons/spear/attack_quick-vecchio1.wav"
+dest_files=[ "res://.import/attack_quick-vecchio1.wav-58ebc3ce051e54f02ee9e08967a4bc19.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

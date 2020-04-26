@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Control
+
+func _process(delta: float) -> void:
+	
+	for i in Globals.players.values():
+		if !i.focus:
+			i.focus = $VBox/Button
+		
+"
+
+[node name="Control" type="HBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBox" type="VBoxContainer" parent="Control"]
+margin_left = 832.0
+margin_right = 1088.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="Control/VBox"]
+margin_right = 256.0
+margin_bottom = 20.0
+focus_neighbour_bottom = NodePath("../Button2")
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Test 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button2" type="Button" parent="Control/VBox"]
+margin_top = 24.0
+margin_right = 256.0
+margin_bottom = 44.0
+focus_neighbour_top = NodePath("../Button")
+focus_neighbour_bottom = NodePath("../Button3")
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Test 2"
+
+[node name="Button3" type="Button" parent="Control/VBox"]
+margin_top = 48.0
+margin_right = 256.0
+margin_bottom = 68.0
+focus_neighbour_top = NodePath("../Button2")
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Test 3"

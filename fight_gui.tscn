@@ -1,0 +1,81 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fight.tscn" type="PackedScene" id=1]
+[ext_resource path="res://weapon_masters/stages/plain.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+func _ready() -> void:
+	Globals.connect(\"player_added\", self, \"_on_player_added\")
+
+func _on_player_added(controller):
+	var setup_panel = preload(\"res://ui/player_setup_panel.tscn\").instance()
+	setup_panel.controller = controller
+	setup_panel.connect(\"player_ready\", self, \"_on_player_ready\", [controller, setup_panel])
+	
+	$PlayerPanels.add_child(setup_panel)
+
+func _on_player_ready(controller: Globals.Player, setup_panel: Control):
+	
+	# remove setup_panel
+	$PlayerPanels.remove_child(setup_panel)
+	setup_panel.queue_free()
+	
+	# add gameplay_panel
+	var panel = preload(\"res://ui/player_gameplay_panel.tscn\").instance()
+	panel.controller = controller
+	
+	#panel.show()
+	#panel.set_process(true)
+	#panel.call_deferred(\"set_physics_process\", true)
+	
+	$PlayerPanels.add_child(panel)
+	
+	# add player entity
+	$ViewportContainer/MainViewport/World.add_player(controller)
+	
+
+func _process(_delta):
+	$Label.text = str(Engine.get_frames_per_second())
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainViewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 1920, 1080 )
+size_override_stretch = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="World" parent="ViewportContainer/MainViewport" instance=ExtResource( 1 )]
+stage_scene = ExtResource( 2 )
+
+[node name="PlayerPanels" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -240.0
+grow_vertical = 0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0

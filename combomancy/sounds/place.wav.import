@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/place.wav-0cb7f245d06a76ed9935cc496236ebc4.sample"
+
+[deps]
+
+source_file="res://combomancy/sounds/place.wav"
+dest_files=[ "res://.import/place.wav-0cb7f245d06a76ed9935cc496236ebc4.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/stab.wav-07714d1889c8d16e6e0327abb4b73b34.sample"
+
+[deps]
+
+source_file="res://weapon_masters/weapons/knife/stab.wav"
+dest_files=[ "res://.import/stab.wav-07714d1889c8d16e6e0327abb4b73b34.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

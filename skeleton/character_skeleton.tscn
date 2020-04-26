@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://skeleton/character_skeleton.gd" type="Script" id=2]
+
+[node name="Skeleton" type="Node2D"]
+z_index = -1
+script = ExtResource( 2 )
+body_width = 20.0
+leg_width = 8.0
+leg_length = 24.0
+face_scale = 0.5
+
+[node name="Head" type="Position2D" parent="."]
+position = Vector2( 0, -32 )
+
+[node name="Face" type="Position2D" parent="Head"]
+position = Vector2( 4, 0 )
+
+[node name="BodyTop" type="Position2D" parent="."]
+position = Vector2( 0, -16 )
+
+[node name="BodyBottom" type="Position2D" parent="."]
+position = Vector2( 0, 32 )
+
+[node name="FootL" type="Position2D" parent="."]
+position = Vector2( -16, 48 )
+
+[node name="FootR" type="Position2D" parent="."]
+position = Vector2( 16, 48 )
