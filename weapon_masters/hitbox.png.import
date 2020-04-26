@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hitbox.png-af13967e02fb15528d70b6a699b587ea.stex"
+path="res://.import/hitbox.png-9cf799c4f2aa22f3243bda37a3514a43.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://hitbox.png"
-dest_files=[ "res://.import/hitbox.png-af13967e02fb15528d70b6a699b587ea.stex" ]
+source_file="res://weapon_masters/hitbox.png"
+dest_files=[ "res://.import/hitbox.png-9cf799c4f2aa22f3243bda37a3514a43.stex" ]
 
 [params]
 

@@ -27,7 +27,7 @@ _global_script_classes=[ {
 "base": "Area2D",
 "class": "Hitbox",
 "language": "GDScript",
-"path": "res://hitbox.gd"
+"path": "res://weapon_masters/hitbox.gd"
 }, {
 "base": "Entity",
 "class": "PlayerEntity",
@@ -53,7 +53,7 @@ _global_script_class_icons={
 "Entity": "",
 "GameplayCamera": "",
 "HSelection": "",
-"Hitbox": "res://hitbox.png",
+"Hitbox": "res://weapon_masters/hitbox.png",
 "PlayerEntity": "",
 "SpriteRect": "",
 "Weapon": "",

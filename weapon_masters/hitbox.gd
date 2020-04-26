@@ -1,5 +1,5 @@
 tool extends Area2D
-class_name Hitbox, "res://hitbox.png"
+class_name Hitbox, "hitbox.png"
 
 export var active: bool = false setget set_active
 
