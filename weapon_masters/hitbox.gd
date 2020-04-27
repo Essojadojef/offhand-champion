@@ -9,11 +9,14 @@ export(float) var launch_distance = 1
 
 export(float) var launch_angle = 0
 
-#var exceptions = []
+var exceptions = []
 
 func set_active(value: bool):
 	active = value
 	set_physics_process(value)
+	
+	if !active:
+		exceptions.clear()
 
 func _ready():
 	set_physics_process(false)
@@ -23,12 +26,12 @@ func _ready():
 func _physics_process(delta):
 	
 	for i in get_overlapping_bodies():
-		if i is Entity and owner.can_hit(i):
+		if i is Entity and owner.can_hit(i) and !exceptions.has(i):
+			exceptions.append(i)
 			
-			#var launch_vector = Vector2( cos(deg2rad(launch_angle)), sin(deg2rad(launch_angle)) ).rotated(global_rotation)
 			var launch_vector = Vector2.RIGHT.rotated(global_rotation + deg2rad(launch_angle))
-			launch_vector *= global_scale
-			owner.emit_signal("hit", i, damage, launch_vector * launch_distance)
+			launch_vector *= global_scale * launch_distance
+			owner.emit_signal("hit", i, damage, launch_vector)
 			
 
 func _draw():
