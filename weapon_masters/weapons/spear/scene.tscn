@@ -1,16 +1,14 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://weapon_masters/hitbox.gd" type="Script" id=1]
 [ext_resource path="res://weapon_masters/weapons/spear/sprite.png" type="Texture" id=2]
 [ext_resource path="res://weapon_masters/weapons/spear/spear_attack.png" type="Texture" id=3]
 [ext_resource path="res://weapon_masters/weapons/spear/rotation_attack.png" type="Texture" id=4]
-[ext_resource path="res://weapon_masters/weapons/spear/quick.png" type="Texture" id=5]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_heavy.wav" type="AudioStream" id=6]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_quick.wav" type="AudioStream" id=7]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_rotation.wav" type="AudioStream" id=8]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_launch.wav" type="AudioStream" id=9]
 [ext_resource path="res://skeleton/character_skeleton.tscn" type="PackedScene" id=10]
-
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon
@@ -64,6 +62,7 @@ func attack(attack_name: String):
 			
 		\"glide\":
 			$AnimationPlayer.play(attack_name)
+			user.velocity.y -= 400
 			
 		_:
 			$AnimationPlayer.play(attack_name)
@@ -119,18 +118,14 @@ extents = Vector2( 32, 16 )
 [sub_resource type="CircleShape2D" id=5]
 radius = 9.0
 
-[sub_resource type="SegmentShape2D" id=6]
-a = Vector2( -8, 0 )
-b = Vector2( 8, 0 )
-
-[sub_resource type="CircleShape2D" id=7]
+[sub_resource type="CircleShape2D" id=6]
 radius = 32.0
 
-[sub_resource type="AudioStreamRandomPitch" id=8]
+[sub_resource type="AudioStreamRandomPitch" id=7]
 audio_stream = ExtResource( 7 )
 random_pitch = 1.2
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=8]
 length = 0.800002
 step = 0.0166667
 tracks/0/type = "value"
@@ -194,7 +189,7 @@ tracks/4/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=9]
 step = 0.0166667
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:position")
@@ -221,7 +216,7 @@ tracks/1/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=10]
 resource_name = "launch_hold"
 length = 0.166667
 loop = true
@@ -251,11 +246,11 @@ tracks/1/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=12]
+[sub_resource type="Animation" id=11]
 length = 0.2
 step = 0.0166667
 tracks/0/type = "value"
-tracks/0/path = NodePath("Spear/StandardQuick:position")
+tracks/0/path = NodePath("CastPoint:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -264,10 +259,10 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 24, -16 ), Vector2( 24, 0 ), Vector2( 24, 16 ) ]
+"values": [ Vector2( 22, -18 ), Vector2( 32, 0 ), Vector2( 22, 18 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Spear/StandardQuick:rotation_degrees")
+tracks/1/path = NodePath("Spear/Quick:playing")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -275,131 +270,11 @@ tracks/1/enabled = true
 tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ 0.0 ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("Spear/StandardQuick/Sprite:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = false
-tracks/2/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 1, 0 ), Vector2( 1, 1 ), Vector2( 1, 0 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("Spear/StandardQuick:active")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ true, false ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("Spear/StandardQuick/Sprite:region_rect")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Rect2( 0, 0, 32, 0 ), Rect2( 0, 0, 32, 64 ), Rect2( 0, 64, 32, 0 ) ]
-}
-tracks/5/type = "value"
-tracks/5/path = NodePath("Spear/StandardQuick/CollisionShape2D:scale")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0.5, 0.5 ), Vector2( 1, 1 ), Vector2( 0.5, 0.5 ) ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("Spear/StandardQuick/CollisionShape2D:position")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
-"transitions": PoolRealArray( 0.5, 1.99949, 1 ),
-"update": 0,
-"values": [ Vector2( -8, 0 ), Vector2( 8, 0 ), Vector2( -8, 0 ) ]
-}
-tracks/7/type = "value"
-tracks/7/path = NodePath("Spear/Shaft:position")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0, 0 ), Vector2( 0, 0 ) ]
-}
-tracks/8/type = "value"
-tracks/8/path = NodePath("Spear/Shaft:rotation_degrees")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ -39.0, 39.0 ]
-}
-tracks/9/type = "value"
-tracks/9/path = NodePath("Spear/Shaft:active")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ true, false ]
-}
-tracks/10/type = "value"
-tracks/10/path = NodePath("CastPoint:position")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 22, -18 ), Vector2( 32, 0 ), Vector2( 22, 18 ) ]
-}
-tracks/11/type = "value"
-tracks/11/path = NodePath("Spear/Quick:playing")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=13]
+[sub_resource type="Animation" id=12]
 length = 0.4
 tracks/0/type = "value"
 tracks/0/path = NodePath("Spear/Rotation:rotation_degrees")
@@ -462,7 +337,7 @@ tracks/4/keys = {
 "values": [ true, true ]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=13]
 resource_name = "stab"
 length = 0.516668
 step = 0.0166667
@@ -578,10 +453,7 @@ scale = Vector2( 0.599999, 0.5 )
 z_index = 1
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
 launch_distance = 0.0
-launch_angle = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Heavy"]
 shape = SubResource( 3 )
@@ -598,9 +470,6 @@ rotation = 4.46638e-06
 scale = Vector2( 2, 1 )
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
-launch_distance = 1.0
 launch_angle = -45.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Glide"]
@@ -647,10 +516,7 @@ position = Vector2( 40, 0 )
 scale = Vector2( 0.5, 0.5 )
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
 launch_distance = 10.0
-launch_angle = 0.0
 
 [node name="Sprite" type="Sprite" parent="Spear/Launch"]
 scale = Vector2( 1e-05, 1 )
@@ -661,50 +527,12 @@ texture = ExtResource( 3 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/Launch"]
 shape = SubResource( 5 )
 
-[node name="StandardQuick" type="Area2D" parent="Spear"]
-position = Vector2( 24, 16 )
-scale = Vector2( 0.5, 0.5 )
-collision_layer = 0
-script = ExtResource( 1 )
-active = false
-damage = 1.0
-launch_distance = 1.0
-launch_angle = -15.0
-
-[node name="Sprite" type="Sprite" parent="Spear/StandardQuick"]
-z_index = 16
-z_as_relative = false
-texture = ExtResource( 5 )
-region_enabled = true
-region_rect = Rect2( 0, 64, 32, 0 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/StandardQuick"]
-position = Vector2( -8, 0 )
-scale = Vector2( 0.5, 0.5 )
-shape = SubResource( 5 )
-
-[node name="Shaft" type="Area2D" parent="Spear"]
-rotation = 0.680678
-collision_layer = 0
-script = ExtResource( 1 )
-active = false
-damage = 1.0
-launch_distance = 1.0
-launch_angle = -15.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/Shaft"]
-position = Vector2( 16, 0 )
-shape = SubResource( 6 )
-
 [node name="Rotation" type="Area2D" parent="Spear"]
 visible = false
 rotation = 6.28319
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
 launch_distance = 2.0
-launch_angle = 0.0
 
 [node name="Sprite" type="Sprite" parent="Spear/Rotation"]
 z_index = 16
@@ -713,10 +541,10 @@ texture = ExtResource( 4 )
 hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/Rotation"]
-shape = SubResource( 7 )
+shape = SubResource( 6 )
 
 [node name="Quick" type="AudioStreamPlayer2D" parent="Spear"]
-stream = SubResource( 8 )
+stream = SubResource( 7 )
 attenuation = 0.5
 
 [node name="Sprite" type="Sprite" parent="."]
@@ -729,13 +557,11 @@ position = Vector2( 22, 18 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 playback_process_mode = 0
 method_call_mode = 1
-anims/glide = SubResource( 9 )
-anims/launch_charge = SubResource( 10 )
-anims/launch_hold = SubResource( 11 )
-anims/quick = SubResource( 12 )
-anims/rotation = SubResource( 13 )
-anims/stab = SubResource( 14 )
+anims/glide = SubResource( 8 )
+anims/launch_charge = SubResource( 9 )
+anims/launch_hold = SubResource( 10 )
+anims/quick = SubResource( 11 )
+anims/rotation = SubResource( 12 )
+anims/stab = SubResource( 13 )
 
 [node name="Skeleton" parent="." instance=ExtResource( 10 )]
-face_node = NodePath("")
-editor_only = true

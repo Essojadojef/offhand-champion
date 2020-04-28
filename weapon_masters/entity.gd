@@ -142,9 +142,9 @@ func damage(intensity, push):
 	
 	combo_damage += intensity
 	
-	velocity = push * combo_damage * 50
+	velocity = push * combo_damage * 200
 	
-	stun = 30
+	stun = 60
 	
 	if $"Hurt" and !$"Hurt".playing :
 		$"Hurt".play()
