@@ -128,7 +128,7 @@ func damage(intensity, push):
 		die()
 	
 	.damage(intensity, push * .5)
-	
+	#update() # debugging
 	#airdodge_available = true
 	
 
@@ -227,6 +227,9 @@ func process_skeleton():
 		else:
 			$AnimationPlayer.play("Default")
 			
+		
+	elif !on_ground:
+		$AnimationPlayer.play("Jump")
 		
 	elif !dodge_time:
 		# animation
@@ -438,4 +441,6 @@ func _on_PickupArea_body_exited(body):
 		$PickupIcon.hide()
 
 
+#func _draw():
+#	draw_line(Vector2(), velocity, Color.white) # debugging
 
