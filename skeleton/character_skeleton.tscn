@@ -12,18 +12,40 @@ face_scale = 0.5
 
 [node name="Head" type="Position2D" parent="."]
 position = Vector2( 0, -32 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}
 
 [node name="Face" type="Position2D" parent="Head"]
 position = Vector2( 4, 0 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}
 
 [node name="BodyTop" type="Position2D" parent="."]
 position = Vector2( 0, -16 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}
 
-[node name="BodyBottom" type="Position2D" parent="."]
-position = Vector2( 0, 32 )
+[node name="BodyMiddle" type="Position2D" parent="."]
+visible = false
+position = Vector2( 0, 16 )
+scale = Vector2( 20, 1 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}
 
 [node name="FootL" type="Position2D" parent="."]
 position = Vector2( -16, 48 )
+scale = Vector2( 8, 1 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}
 
 [node name="FootR" type="Position2D" parent="."]
 position = Vector2( 16, 48 )
+scale = Vector2( 8, 1 )
+__meta__ = {
+"_gizmo_extents_": 1.0
+}

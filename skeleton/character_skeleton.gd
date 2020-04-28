@@ -27,45 +27,46 @@ func _process(delta):
 	curve.clear_points()
 	
 	# body
-	curve.add_point($BodyTop.position, N, L * body_width)
 	
-	# outer leg
-	curve.add_point(
-		#$FootL.position + controller_offset($FootL, L * leg_width),
-		$FootL.position + (L * leg_width).rotated($FootL.rotation),
-		#controller_offset($FootL, U * leg_length), N)
-		(U * leg_length).rotated($FootL.rotation), N)
+	curve.add_point($BodyTop.position, N, -$BodyTop.transform.x * body_width)
 	
-	# inner leg
+	#curve.add_point(
+	#	$BodyMiddle.transform.xform(Vector2.LEFT),
+	#	-$BodyMiddle.transform.y,
+	#	$BodyMiddle.transform.y)
+	
+	# left leg
+	
 	curve.add_point(
-		#$FootL.position + controller_offset($FootL, R * leg_width),
-		$FootL.position + (R * leg_width).rotated($FootL.rotation),
-		#Vector2(), Vector2(0, -leg_length / 2).rotated($FootL.rotation))
-		N, (U * leg_length / 2).rotated($FootL.rotation))
+		$FootL.transform.xform(Vector2.LEFT),
+		-$FootL.transform.y * leg_length, N)
+	
+	curve.add_point(
+		$FootL.transform.xform(Vector2.RIGHT),
+		N, -$FootL.transform.y * leg_length / 2)
 	
 	#curve.add_point($BodyBottom.position, Vector2(-body_width / 2, 0), Vector2(body_width / 2, 0))
 	
-	# inner leg
-	curve.add_point(
-		#$FootR.position - Vector2(leg_width, 0).rotated($FootR.rotation),
-		$FootR.position + (L * leg_width).rotated($FootR.rotation),
-		#Vector2(0, -leg_length / 2).rotated($FootR.rotation), Vector2())
-		(U * leg_length / 2).rotated($FootR.rotation), N)
+	# right leg
 	
-	# outer leg
 	curve.add_point(
-		#$FootR.position + Vector2(leg_width, 0).rotated($FootR.rotation),
-		$FootR.position + (R * leg_width).rotated($FootR.rotation),
-		#Vector2(), Vector2(0, -leg_length).rotated($FootR.rotation))
-		N, (U * leg_length).rotated($FootR.rotation))
+		$FootR.transform.xform(Vector2.LEFT),
+		-$FootR.transform.y * leg_length / 2, N)
+	
+	curve.add_point(
+		$FootR.transform.xform(Vector2.RIGHT),
+		N, -$FootR.transform.y * leg_length)
 	
 	# body
-	curve.add_point($BodyTop.position, R * body_width, N)
+	
+	#curve.add_point(
+	#	$BodyMiddle.transform.xform(Vector2.RIGHT),
+	#	$BodyMiddle.transform.y,
+	#	-$BodyMiddle.transform.y)
+	
+	curve.add_point($BodyTop.position, $BodyTop.transform.x * body_width, N)
 	
 	update()
-
-static func controller_offset(node: Node, offset: Vector2) -> Vector2:
-	return offset.rotated(node.rotation)
 
 func _draw():
 	var zoom = get_viewport_transform().get_scale().length()
