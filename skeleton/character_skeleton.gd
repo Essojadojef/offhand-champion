@@ -77,7 +77,8 @@ func _draw():
 	if points.size() < 3: return
 	draw_polygon(points, PoolColorArray([Color.white]))
 	
-	draw_circle($Head.position, 16, Color.white)
+	draw_set_transform_matrix($Head.transform)
+	draw_circle(Vector2(), 16, Color.white)
 	
 	# render face
 	var basis = Basis()
@@ -85,9 +86,9 @@ func _draw():
 	basis = basis.rotated(Vector3.UP, clamp($Head/Face.position.x, -16, 16) / 32 * PI)
 	
 	var t = Transform2D(
-		Vector2(basis.x.x, basis.x.y) * face_scale,
-		Vector2(basis.y.x, basis.y.y) * face_scale,
-		Vector2(basis.z.x, basis.z.y) * 16 + $Head.position)
+		Vector2(basis.x.x, basis.x.y) * face_scale * $Head.transform.x,
+		Vector2(basis.y.x, basis.y.y) * face_scale * $Head.transform.y,
+		$Head.transform.xform(Vector2(basis.z.x, basis.z.y) * 16))
 	
 	if face_node and get_node(face_node):
 		get_node(face_node).transform = t
