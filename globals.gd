@@ -136,7 +136,8 @@ class Player extends Node2D:
 	var focus : Node # is Control while in menus, is KinematicBody2D while playing
 	signal focus_changed(new_focus)
 	
-	var controls = {}
+	var stick_settings = {}
+	var button_settings = {}
 	signal controls_changed(controls)
 	
 	var match_settings = {}
@@ -149,6 +150,7 @@ class Player extends Node2D:
 	
 	var input_frames = 0
 	
+	var current_input = {} # inputs state delayed by input_buffer_frames
 	
 	func _init(_device: int):
 		process_priority = -1 # callbacks are executed first in this node
@@ -158,29 +160,36 @@ class Player extends Node2D:
 		color = Globals.get_available_color()
 		
 		# set dafault controls
-		controls = {
-				"left": KEY_LEFT,
-				"right": KEY_RIGHT,
-				"up": KEY_UP,
-				"down": KEY_DOWN,
-				"heavy_time": 5,
-				"jump": KEY_W,
-				"guard": KEY_Q,
-				"weapon_1": KEY_D,
-				"weapon_2": KEY_E,
-				"item": KEY_A,
-				"throw": KEY_SHIFT
+		stick_settings = {
+				#"left": KEY_LEFT,
+				#"right": KEY_RIGHT,
+				#"up": KEY_UP,
+				#"down": KEY_DOWN,
+				"left": KEY_A,
+				"right": KEY_D,
+				"up": KEY_W,
+				"down": KEY_S,
+				"heavy_time": 5
 			} if keyboard else {
 				"stick_x": JOY_AXIS_0,
 				"stick_y": JOY_AXIS_1,
 				"deadzone": .8,
-				"heavy_time": 5,
-				"jump": JOY_L,
-				"guard": JOY_R,
-				"weapon_1": JOY_XBOX_B,
-				"weapon_2": JOY_XBOX_A,
-				"item": JOY_XBOX_X,
-				"throw": JOY_R2
+				"heavy_time": 5
+			}
+		button_settings = {
+				"jump": [KEY_SPACE],
+				"weapon_1": [KEY_J],
+				"weapon_2": [KEY_I],
+				"item": [KEY_K],
+				"guard": [KEY_O],
+				"throw": [KEY_P]
+			} if keyboard else {
+				"jump": [JOY_L],
+				"weapon_1": [JOY_XBOX_B],
+				"weapon_2": [JOY_XBOX_A],
+				"item": [JOY_XBOX_X],
+				"guard": [JOY_R],
+				"throw": [JOY_R2]
 			}
 		
 		z_index = 10
@@ -200,7 +209,7 @@ class Player extends Node2D:
 	
 	
 	func is_event_allowed(event: InputEvent) -> bool:
-		return event is InputEventKey if keyboard else event.device == device
+		return keyboard if event is InputEventKey else event.device == device
 	
 	func _unhandled_input(event: InputEvent) -> void:
 		if !is_event_allowed(event): return
@@ -212,7 +221,7 @@ class Player extends Node2D:
 	
 	
 	func get_current_input() -> Dictionary:
-		return input_buffer[input_buffer_index]
+		return current_input
 	
 	func _physics_process(delta):
 		if !focus is KinematicBody2D: return
@@ -221,16 +230,7 @@ class Player extends Node2D:
 		if input_buffer_index >= input_buffer_frames:
 			input_buffer_index = 0
 		
-		var current_input = input_buffer[input_buffer_index]
-		
-		#focus.movement = current_input.direction.x
-		#focus.tilt = current_input.direction.y
-		
-		focus.weapon_inputs = current_input.weapons
-		#focus.item_input = current_input.item
-		focus.throw = current_input.throw
-		
-		
+		current_input = input_buffer[input_buffer_index]
 		
 		input_buffer[input_buffer_index] = {
 			"direction": get_directional_input(),
@@ -243,12 +243,6 @@ class Player extends Node2D:
 			#"just_released": just_released}
 			#"swap": both_weapon_inputs}
 		
-		if input_buffer[input_buffer_index].weapons.has(true):
-			input_frames += 1
-			print("input_frames: ", input_frames)
-		else:
-			input_frames = 0
-		
 		#just_pressed = []
 		#just_released = []
 		
@@ -257,24 +251,26 @@ class Player extends Node2D:
 	# y_axis: -1 = up, 1 = down
 	func get_directional_input() -> Vector2:
 		if keyboard:
-			var left = Input.is_key_pressed(controls.left)
-			var right = Input.is_key_pressed(controls.right)
-			var up = Input.is_key_pressed(controls.up)
-			var down = Input.is_key_pressed(controls.down)
+			var left = Input.is_key_pressed(stick_settings.left)
+			var right = Input.is_key_pressed(stick_settings.right)
+			var up = Input.is_key_pressed(stick_settings.up)
+			var down = Input.is_key_pressed(stick_settings.down)
 			return Vector2(int(right) - int(left), int(down) - int(up))
 		else:
 			var value = Vector2(
-				Input.get_joy_axis(device, controls.stick_x),
-				Input.get_joy_axis(device, controls.stick_y))
+				Input.get_joy_axis(device, stick_settings.stick_x),
+				Input.get_joy_axis(device, stick_settings.stick_y))
 			
-			if value.length() < controls.deadzone:
+			if value.length() < stick_settings.deadzone:
 				return Vector2()
 			
 			return value.round()
 	
 	func get_button_input(action: String) -> bool:
-		return Input.is_key_pressed(controls[action]) if keyboard else (
-			Input.is_joy_button_pressed(device, controls[action]))
+		for i in button_settings[action]:
+			if Input.is_key_pressed(i) if keyboard else Input.is_joy_button_pressed(device, i):
+				return true
+		return false
 	
 	
 	
