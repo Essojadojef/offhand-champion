@@ -223,13 +223,8 @@ class Player extends Node2D:
 		
 		var current_input = input_buffer[input_buffer_index]
 		
-		#var was_still = focus.tilt == 0 and focus.movement == 0
-		
 		#focus.movement = current_input.direction.x
 		#focus.tilt = current_input.direction.y
-		
-		#if was_still and (focus.tilt != 0 or focus.movement != 0):
-		#	focus.heavy = controls.heavy_time
 		
 		focus.weapon_inputs = current_input.weapons
 		#focus.item_input = current_input.item

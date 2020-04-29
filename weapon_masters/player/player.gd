@@ -12,6 +12,7 @@ var directional_input = Vector2()
 var h_tilt = 0 # 1 = forward; -1 = back
 var v_tilt = 0 # -1 = up; 1 = down
 
+var was_still = true
 var heavy = 0
 var heavy_time = 5 # time window in which an attack is considered heavy
 
@@ -340,6 +341,14 @@ func process_attack(delta):
 			else:
 				buffered_attack = ""
 			
+	
+	# activate heavy
+	var is_still = directional_input == Vector2()
+	
+	if was_still and !is_still:
+		heavy = heavy_time
+	
+	was_still = is_still
 	
 	if heavy:
 		heavy -= 1
