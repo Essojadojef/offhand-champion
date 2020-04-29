@@ -56,7 +56,12 @@ var dodge_direction = Vector2()
 
 #var jump_buffer = 0
 #var JUMP_BUFFER_TIME = 3
-var jump_held = false
+
+var jump_held = false # true if the player is holding the button after a jump or long jump
+
+var jump_startup = 0 # time before jump
+var high_jump = false # changes the jump's height and startup time
+
 var airdodge_available = true # replaces midair jump, gives iframes + momentum in any direction
 
 #var throw_time = 0 # how long the throw button is being pressed
@@ -196,6 +201,7 @@ func _physics_process(delta: float):
 	process_attack(delta)
 	
 
+
 func process_skeleton():
 	if !controller:
 		return
@@ -210,7 +216,7 @@ func process_skeleton():
 	
 	# animation
 	
-	if $AnimationPlayer.current_animation == "Turn":
+	if $AnimationPlayer.current_animation == "Turn" or dodge_time or jump_startup:
 		return
 	
 	if current_attack:
@@ -250,6 +256,14 @@ func process_movement(delta):
 
 func process_jump():
 	
+	if jump_startup:
+		jump_startup -= 1
+		
+		if !jump_startup:
+			velocity.y = -700 if high_jump else -500
+		
+		return
+	
 	if on_ground: airdodge_available = true
 	
 	if current_attack:
@@ -257,31 +271,43 @@ func process_jump():
 	
 	if get_input().jump:
 		
-		if on_ground:
+		if jump_held:
+			
+			if on_ground:
+				jump()
+			
+		elif on_ground:
 			if v_tilt == 1 and !jump_held:
 				dodge()
 				
-			else: # jump and hi-jump
-				velocity.y = -700 if v_tilt == -1 else -500
+			else:
+				jump()
 				
 			
-		elif airdodge_available and !jump_held:
+		elif airdodge_available:
 			airdodge_available = false
 			dodge()
 			
-		
-		jump_held = true
 		
 	else:
 		jump_held = false
 		
 	
 
+func jump():
+	jump_held = true
+	high_jump = v_tilt == -1
+	jump_startup = 6 if high_jump else 3
+	$AnimationPlayer.play("Jumpsquat")
+	$AnimationPlayer.playback_speed = 1
+
 func dodge():
+	if dodge_time:
+		return
 	dodge_time = dodge_iframes + dodge_recovery
 	dodge_direction = directional_input.normalized()
-	$AnimationPlayer.play("Default")
-	
+	$AnimationPlayer.play("Dodge Forward" if dodge_direction.x > 0 else "Dodge Back")
+	$AnimationPlayer.playback_speed = 1
 
 func process_aim(delta: float):
 	
