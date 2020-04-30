@@ -23,6 +23,8 @@ var throw = false
 
 
 
+
+
 #var weapons = {"sword": load("res://weapons/sword/nodes.tscn")}
 var fallback_weapon : Weapon
 var weapons = ["", ""]
@@ -42,7 +44,7 @@ var items = []
 var selected_item = 0
 
 var facing = 1
-var crouching = false
+var turn_time = 0
 
 var lives = 3
 var health = 100
@@ -168,10 +170,7 @@ func _physics_process(delta: float):
 	v_tilt = directional_input.y
 	h_tilt = directional_input.x * facing
 	
-	
-	if $AnimationPlayer.current_animation == "Turn":
-		$AnimationPlayer.playback_speed = 1
-		print("Turn: ", $AnimationPlayer.current_animation_position / delta)
+	process_turning()
 	
 	if dodge_time:
 		dodge_time -= 1
@@ -180,7 +179,7 @@ func _physics_process(delta: float):
 		elif on_ground:
 			velocity *= .9
 	
-	if stun or $AnimationPlayer.current_animation == "Turn" or dodge_time:
+	if stun or turn_time or dodge_time:
 		return
 	
 	process_throw()
@@ -217,7 +216,7 @@ func process_skeleton():
 	
 	# animation
 	
-	if $AnimationPlayer.current_animation == "Turn" or dodge_time or jump_startup:
+	if turn_time or dodge_time or jump_startup:
 		return
 	
 	if current_attack:
@@ -299,7 +298,6 @@ func jump():
 	high_jump = v_tilt == -1
 	jump_startup = 6 if high_jump else 3
 	$AnimationPlayer.play("Jumpsquat")
-	$AnimationPlayer.playback_speed = 1
 
 func dodge():
 	if dodge_time:
@@ -307,7 +305,6 @@ func dodge():
 	dodge_time = dodge_iframes + dodge_recovery
 	dodge_direction = directional_input.normalized()
 	$AnimationPlayer.play("Dodge Forward" if dodge_direction.x > 0 else "Dodge Back")
-	$AnimationPlayer.playback_speed = 1
 
 func process_aim(delta: float):
 	
@@ -389,7 +386,7 @@ func process_attack_slot(slot: int, pressed: bool):
 		set_weapon(slot, pickup_target.weapon)
 		pickup_target.queue_free()
 	
-	if current_attack or $AnimationPlayer.current_animation == "Turn":
+	if current_attack or turn_time or jump_startup:
 		buffer_attack(slot)
 	else:
 		perform_attack(slot, weapon_nodes[weapons[slot]].get_attack())
@@ -457,15 +454,17 @@ func spawn_projectile(projectile: Entity, initial_position : Vector2, projectile
 	get_parent().add_child(projectile)
 
 func turn():
-	if $AnimationPlayer.current_animation == "Turn":
-		return
-	
 	facing *= -1
-	
-	$AnimationPlayer.play("Turn")
-	yield($AnimationPlayer, "animation_finished")
-	scale.x = -1
-	
+	turn_time = 8
+	$AnimationPlayer.play("turn")
+
+func process_turning():
+	if turn_time:
+		turn_time -= 1
+		
+		if !turn_time:
+			scale.x = -1
+		
 
 func _on_PickupArea_body_entered(body: Node) -> void:
 	pickup_target = body
