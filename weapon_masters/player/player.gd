@@ -193,9 +193,8 @@ func _physics_process(delta: float):
 		modulate.a = abs(cos(PI * 100 / (invulnerability + 5) + invulnerability * 2))
 	
 	
-	if !current_attack:
-		process_jump()
-		process_movement(delta)
+	process_jump()
+	process_movement(delta)
 	
 	process_aim(delta)
 	process_attack(delta)
@@ -246,6 +245,12 @@ func process_skeleton():
 		
 
 func process_movement(delta):
+	if current_attack:
+		if on_ground:
+			velocity.x = 0
+		
+		return
+	
 	if on_ground:
 		velocity.x = directional_input.x * walk_speed * 2
 		
@@ -297,7 +302,7 @@ func jump():
 	jump_held = true
 	high_jump = v_tilt == -1
 	jump_startup = 6 if high_jump else 3
-	$AnimationPlayer.play("Jumpsquat")
+	$AnimationPlayer.play("jumpsquat")
 
 func dodge():
 	if dodge_time:
@@ -320,10 +325,13 @@ func process_aim(delta: float):
 	$Weapons/Aim.visible = aiming
 	
 
+func can_attack():
+	return !(stun or current_attack or dodge_time or turn_time or jump_startup)
+
 func process_attack(delta):
 	
 	if buffered_attack:
-		if !current_attack:
+		if can_attack():
 			if h_tilt < 0:
 				turn()
 			else:
@@ -386,10 +394,10 @@ func process_attack_slot(slot: int, pressed: bool):
 		set_weapon(slot, pickup_target.weapon)
 		pickup_target.queue_free()
 	
-	if current_attack or turn_time or jump_startup:
-		buffer_attack(slot)
-	else:
+	if can_attack():
 		perform_attack(slot, weapon_nodes[weapons[slot]].get_attack())
+	else:
+		buffer_attack(slot)
 	
 
 
@@ -399,9 +407,8 @@ func buffer_attack(slot: int):
 	buffer_time = 7
 
 func perform_attack(slot: int, attack: String):
-	print("perform_attack")
-	if on_ground:
-		velocity = Vector2()
+	#if on_ground:
+	#	velocity = Vector2()
 
 	current_weapon = weapons[slot]
 	current_attack = attack
