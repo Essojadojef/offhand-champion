@@ -1,4 +1,4 @@
-extends Node2D
+tool extends Node2D
 class_name Weapon
 
 var user
@@ -10,9 +10,6 @@ signal hit(weapon, attack_name)
 signal attack_finished()
 
 func _ready() -> void:
-	if Engine.editor_hint :
-		pass
-	
 	anim_player
 	$AnimationPlayer.connect("animation_finished", self, "_on_animation_finished")
 

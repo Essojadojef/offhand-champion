@@ -5,7 +5,6 @@
 [ext_resource path="res://weapon_masters/weapons/bare/punch.png" type="Texture" id=3]
 [ext_resource path="res://skeleton/character_skeleton.tscn" type="PackedScene" id=5]
 
-
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon
 
@@ -366,22 +365,17 @@ tracks/6/keys = {
 script = SubResource( 1 )
 
 [node name="Skeleton" parent="." instance=ExtResource( 5 )]
-face_node = NodePath("")
-editor_only = true
 
 [node name="Punch" type="Area2D" parent="."]
-position = Vector2( 28, -6 )
+visible = false
+position = Vector2( 20, -4 )
 rotation = -0.1309
 z_index = 5
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
-launch_distance = 1.0
-launch_angle = 0.0
 
 [node name="Trail" type="Sprite" parent="Punch"]
-modulate = Color( 1, 1, 1, 0.999982 )
+modulate = Color( 1, 1, 1, 0 )
 show_behind_parent = true
 position = Vector2( -8, 0 )
 texture = ExtResource( 3 )
@@ -400,10 +394,6 @@ shape = SubResource( 2 )
 position = Vector2( 20, 32 )
 collision_layer = 0
 script = ExtResource( 1 )
-active = false
-damage = 1.0
-launch_distance = 1.0
-launch_angle = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Kick"]
 shape = SubResource( 3 )

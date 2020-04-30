@@ -80,16 +80,16 @@ audio_stream = ExtResource( 11 )
 [sub_resource type="AudioStreamRandomPitch" id=6]
 audio_stream = ExtResource( 13 )
 
-[sub_resource type="CircleShape2D" id=12]
+[sub_resource type="CircleShape2D" id=7]
 radius = 16.0
 
-[sub_resource type="CircleShape2D" id=7]
+[sub_resource type="CircleShape2D" id=8]
 radius = 32.0
 
-[sub_resource type="CircleShape2D" id=8]
+[sub_resource type="CircleShape2D" id=9]
 radius = 8.0
 
-[sub_resource type="Animation" id=15]
+[sub_resource type="Animation" id=10]
 resource_name = "down_blow"
 length = 0.5
 step = 0.0166667
@@ -202,7 +202,7 @@ tracks/8/keys = {
 "values": [ true, false, true, false ]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=11]
 resource_name = "forward_slash"
 length = 0.3
 step = 0.0166667
@@ -279,7 +279,7 @@ tracks/5/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="Animation" id=16]
+[sub_resource type="Animation" id=12]
 resource_name = "rotation"
 length = 0.3
 step = 0.05
@@ -380,7 +380,7 @@ tracks/7/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=17]
+[sub_resource type="Animation" id=13]
 resource_name = "spin"
 length = 0.2
 loop = true
@@ -470,7 +470,7 @@ tracks/6/keys = {
 "values": [ 16, -16, -16, 16, 16 ]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=14]
 length = 0.500001
 step = 0.0166667
 tracks/0/type = "value"
@@ -654,7 +654,7 @@ tracks/14/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=15]
 length = 0.166667
 step = 0.0166667
 tracks/0/type = "value"
@@ -816,7 +816,7 @@ tracks/12/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=16]
 length = 0.133334
 loop = true
 step = 0.0166667
@@ -928,8 +928,7 @@ tracks/8/keys = {
 "values": [ Vector2( -8, 0 ), Vector2( -8, 1 ), Vector2( -8, 0 ), Vector2( -8, -1 ), Vector2( -8, 0 ) ]
 }
 
-[sub_resource type="Animation" id=13]
-resource_name = "up_slash"
+[sub_resource type="Animation" id=17]
 length = 0.400001
 step = 0.0166667
 tracks/0/type = "value"
@@ -1103,7 +1102,7 @@ scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 15 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="UpTilt"]
-shape = SubResource( 12 )
+shape = SubResource( 7 )
 
 [node name="Heavy" type="AudioStreamPlayer2D" parent="UpTilt"]
 stream = SubResource( 6 )
@@ -1137,7 +1136,7 @@ z_as_relative = false
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Rotation"]
-shape = SubResource( 7 )
+shape = SubResource( 8 )
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Rotation"]
 position = Vector2( -32, 8.11258e-05 )
@@ -1182,7 +1181,7 @@ z_as_relative = false
 texture = ExtResource( 8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Strike"]
-shape = SubResource( 8 )
+shape = SubResource( 9 )
 
 [node name="Quick2" type="AudioStreamPlayer2D" parent="Strike"]
 position = Vector2( -20, 0 )
@@ -1209,14 +1208,14 @@ position = Vector2( 17, 16 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 method_call_mode = 1
-anims/down_blow = SubResource( 15 )
-anims/forward_slash = SubResource( 14 )
-anims/rotation = SubResource( 16 )
-anims/spin = SubResource( 17 )
-anims/strike = SubResource( 9 )
-anims/strike_charge = SubResource( 10 )
-anims/strike_hold = SubResource( 11 )
-anims/up_slash = SubResource( 13 )
+anims/down_blow = SubResource( 10 )
+anims/forward_slash = SubResource( 11 )
+anims/rotation = SubResource( 12 )
+anims/spin = SubResource( 13 )
+anims/strike = SubResource( 14 )
+anims/strike_charge = SubResource( 15 )
+anims/strike_hold = SubResource( 16 )
+anims/up_slash = SubResource( 17 )
 
 [node name="Sprite" type="Sprite" parent="."]
 visible = false
