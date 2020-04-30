@@ -5,6 +5,9 @@ var user
 
 var anim_player : AnimationPlayer
 
+export var animate_skeleton = false
+var skeleton : Node2D
+
 signal hit(weapon, attack_name)
 
 signal attack_finished()

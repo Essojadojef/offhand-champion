@@ -242,8 +242,8 @@ func process_skeleton():
 	
 	if current_attack:
 		
-		if weapon_nodes[current_weapon].has_node("Skeleton"):
-			var skeleton = weapon_nodes[current_weapon].get_node("Skeleton")
+		if weapon_nodes[current_weapon].animate_skeleton:
+			var skeleton = weapon_nodes[current_weapon].skeleton
 			
 			$Skeleton/Head.transform = skeleton.get_node("Head").transform
 			$Skeleton/Head/Face.transform = skeleton.get_node("Head/Face").transform
@@ -252,11 +252,11 @@ func process_skeleton():
 			$Skeleton/FootR.transform = skeleton.get_node("FootR").transform
 			
 		else:
-			$AnimationPlayer.play("stand")
+			$AnimationPlayer.play("stand" if on_ground else "jump")
 			
 		
 	elif !on_ground:
-		$AnimationPlayer.play("Jump")
+		$AnimationPlayer.play("jump")
 		
 	elif !dodge_time:
 		# animation

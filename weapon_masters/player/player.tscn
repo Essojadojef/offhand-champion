@@ -14,7 +14,7 @@ extents = Vector2( 16, 48 )
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 32, 48 )
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=3]
 resource_name = "Dodge Back"
 length = 0.5
 step = 0.0166667
@@ -199,7 +199,7 @@ tracks/14/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=4]
 length = 0.5
 step = 0.0166667
 tracks/0/type = "value"
@@ -384,6 +384,96 @@ tracks/14/keys = {
 }
 
 [sub_resource type="Animation" id=6]
+length = 0.6
+loop = true
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton/FootR:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 16, 48 ), Vector2( 1.90735e-06, 32 ), Vector2( 16, 32 ), Vector2( 24, 48 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton/FootR:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 15.0, 59.9999, -15.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton/FootL:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 9.53674e-07, 32 ), Vector2( -8, 48 ), Vector2( -24, 48 ), Vector2( -32, 32 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Skeleton/FootL:rotation_degrees")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ -15.0, 0.0, 15.0, 59.9999 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Skeleton/BodyTop:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 8, -16 ), Vector2( 8, -12 ), Vector2( 8, -16 ), Vector2( 8, -12 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Skeleton/Head:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.15, 0.300001, 0.450001 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 16, -32 ), Vector2( 16, -28 ), Vector2( 16, -32 ), Vector2( 16, -28 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Skeleton/Head/Face:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 8, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "jump"
 length = 0.0166667
 step = 0.0166667
 tracks/0/type = "value"
@@ -565,95 +655,6 @@ tracks/14/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ 0.0 ]
-}
-
-[sub_resource type="Animation" id=8]
-length = 0.6
-loop = true
-step = 0.0166667
-tracks/0/type = "value"
-tracks/0/path = NodePath("Skeleton/FootR:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 16, 48 ), Vector2( 1.90735e-06, 32 ), Vector2( 16, 32 ), Vector2( 24, 48 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("Skeleton/FootR:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ 15.0, 59.9999, -15.0, 0.0 ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("Skeleton/FootL:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 9.53674e-07, 32 ), Vector2( -8, 48 ), Vector2( -24, 48 ), Vector2( -32, 32 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("Skeleton/FootL:rotation_degrees")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ -15.0, 0.0, 15.0, 59.9999 ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("Skeleton/BodyTop:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 8, -16 ), Vector2( 8, -12 ), Vector2( 8, -16 ), Vector2( 8, -12 ) ]
-}
-tracks/5/type = "value"
-tracks/5/path = NodePath("Skeleton/Head:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
-"times": PoolRealArray( 0, 0.15, 0.300001, 0.450001 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 16, -32 ), Vector2( 16, -28 ), Vector2( 16, -32 ), Vector2( 16, -28 ) ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("Skeleton/Head/Face:position")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector2( 8, 0 ) ]
 }
 
 [sub_resource type="Animation" id=7]
@@ -841,10 +842,8 @@ tracks/14/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=3]
-resource_name = "stand"
-length = 0.533334
-loop = true
+[sub_resource type="Animation" id=8]
+length = 0.0166667
 step = 0.0166667
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton/FootR:position")
@@ -1419,12 +1418,12 @@ region_rect = Rect2( 32, 32, 32, 32 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "stand"
 playback_process_mode = 0
-"anims/Dodge Back" = SubResource( 4 )
-"anims/Dodge Forward" = SubResource( 5 )
-anims/Jump = SubResource( 6 )
-anims/Run = SubResource( 8 )
+"anims/Dodge Back" = SubResource( 3 )
+"anims/Dodge Forward" = SubResource( 4 )
+anims/Run = SubResource( 6 )
+anims/jump = SubResource( 5 )
 anims/jumpsquat = SubResource( 7 )
-anims/stand = SubResource( 3 )
+anims/stand = SubResource( 8 )
 anims/turn = SubResource( 9 )
 anims/walk = SubResource( 10 )
 anims/walk_backwards = SubResource( 11 )
@@ -1458,15 +1457,30 @@ rotation = -3.38657
 shape = SubResource( 19 )
 
 [node name="Skeleton" parent="." instance=ExtResource( 8 )]
-self_modulate = Color( 0.941176, 0.941176, 0.941176, 1 )
+self_modulate = Color( 0.752941, 0.752941, 0.752941, 1 )
 position = Vector2( 0, -3.57628e-07 )
 face_node = NodePath("Face")
 face_scale = 0.6
 editor_only = false
 
+[node name="Head" parent="Skeleton" index="0"]
+position = Vector2( 0, -36 )
+scale = Vector2( 0.9, 1 )
+
+[node name="BodyTop" parent="Skeleton" index="1"]
+position = Vector2( 0, -20 )
+
+[node name="FootL" parent="Skeleton" index="3"]
+position = Vector2( -6, 52 )
+rotation = -0.261799
+
+[node name="FootR" parent="Skeleton" index="4"]
+position = Vector2( 4, 36 )
+rotation = 0.523599
+
 [node name="Face" type="Sprite" parent="Skeleton"]
-position = Vector2( 6.12294, -32 )
-scale = Vector2( 0.554328, 0.6 )
+position = Vector2( 5.51064, -36 )
+scale = Vector2( 0.498895, 0.6 )
 texture = ExtResource( 2 )
 
 [node name="Weapons" type="Node2D" parent="."]
