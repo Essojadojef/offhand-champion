@@ -232,7 +232,7 @@ func process_skeleton():
 			$Skeleton/FootR.transform = skeleton.get_node("FootR").transform
 			
 		else:
-			$AnimationPlayer.play("Default")
+			$AnimationPlayer.play("stand")
 			
 		
 	elif !on_ground:
@@ -240,9 +240,8 @@ func process_skeleton():
 		
 	elif !dodge_time:
 		# animation
-		var anim_name = "Walk" if on_ground and h_tilt else "Default"
+		var anim_name = "walk" if h_tilt == 1 else "walk_backwards" if h_tilt == -1 else "stand"
 		$AnimationPlayer.play(anim_name)
-		$AnimationPlayer.playback_speed = h_tilt if h_tilt else 1
 		
 		#$Skeleton/Head/Face.position.y = tilt * 4 # move face while tilting
 		
@@ -353,6 +352,8 @@ func process_attack(delta):
 	if heavy:
 		heavy -= 1
 	
+	var weapon_inputs = get_input().weapons
+	
 	if prev_weapon_inputs == weapon_inputs: # nothing changed
 		return
 	
@@ -398,7 +399,7 @@ func process_attack_slot(slot: int, pressed: bool):
 func buffer_attack(slot: int):
 	buffered_slot = slot
 	buffered_attack = weapon_nodes[weapons[slot]].get_attack()
-	buffer_time = .25
+	buffer_time = 7
 
 func perform_attack(slot: int, attack: String):
 	print("perform_attack")
