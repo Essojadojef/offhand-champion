@@ -17,8 +17,8 @@ var heavy = 0
 var heavy_time = 5 # time window in which an attack is considered heavy
 
 var jump = false
-var prev_weapon_inputs = [false, false]
 var weapon_inputs = [false, false]
+var weapon_just_pressed = [false, false]
 var throw = false
 
 
@@ -32,7 +32,6 @@ var weapons = ["", ""]
 var current_weapon : String
 var current_attack : String
 
-var buffer_held = false
 var buffer_time = 0
 var buffered_slot : int
 var buffered_attack : String
@@ -166,9 +165,7 @@ func _physics_process(delta: float):
 	
 	call_deferred("process_skeleton")
 	
-	directional_input = get_input().direction 
-	v_tilt = directional_input.y
-	h_tilt = directional_input.x * facing
+	process_inputs()
 	
 	process_turning()
 	
@@ -200,6 +197,31 @@ func _physics_process(delta: float):
 	process_attack(delta)
 	
 
+func process_inputs():
+	
+	directional_input = get_input().direction 
+	v_tilt = directional_input.y
+	h_tilt = directional_input.x * facing
+	
+	
+	var is_still = directional_input == Vector2()
+	
+	if was_still and !is_still:
+		heavy = heavy_time
+		
+	elif heavy:
+		heavy -= 1
+		
+	
+	was_still = is_still
+	
+	
+	weapon_just_pressed = [
+		get_input().weapons[0] and !weapon_inputs[0],
+		get_input().weapons[1] and !weapon_inputs[1]]
+	
+	weapon_inputs = get_input().weapons
+	
 
 func process_skeleton():
 	if !controller:
@@ -331,6 +353,8 @@ func can_attack():
 func process_attack(delta):
 	
 	if buffered_attack:
+		
+		
 		if can_attack():
 			if h_tilt < 0:
 				turn()
@@ -346,21 +370,6 @@ func process_attack(delta):
 				buffered_attack = ""
 			
 	
-	# activate heavy
-	var is_still = directional_input == Vector2()
-	
-	if was_still and !is_still:
-		heavy = heavy_time
-	
-	was_still = is_still
-	
-	if heavy:
-		heavy -= 1
-	
-	var weapon_inputs = get_input().weapons
-	
-	if prev_weapon_inputs == weapon_inputs: # nothing changed
-		return
 	
 	if weapon_inputs[0] and weapon_inputs[1]:
 		# swap weapons
@@ -369,36 +378,27 @@ func process_attack(delta):
 	if h_tilt < 0 and (weapon_inputs[0] or weapon_inputs[1]) and !current_attack:
 		turn()
 	
-	if prev_weapon_inputs[0] != weapon_inputs[0]:
-		process_attack_slot(0, weapon_inputs[0])
-	
-	if prev_weapon_inputs[1] != weapon_inputs[1]:
-		process_attack_slot(1, weapon_inputs[1])
-	
-	prev_weapon_inputs = weapon_inputs.duplicate()
+	process_attack_slot(0)
+	process_attack_slot(1)
 	
 
-func process_attack_slot(slot: int, pressed: bool):
+func process_attack_slot(slot: int):
 	
-	if !pressed:
-		if current_attack and current_weapon == weapons[slot]:
-			weapon_nodes[weapons[slot]].input_released()
+	if !weapon_inputs[slot] and current_attack and current_weapon == weapons[slot]:
+		release_attack(slot)
+		return
+	
+	if weapon_just_pressed[slot]:
 		
-		return
-	
-	if throw and !current_attack and weapons[slot] != "":
-		throw_weapon(slot)
-		return
-	
-	if pickup_target and weapons[slot] == "" and !weapons.has(pickup_target.weapon):
-		set_weapon(slot, pickup_target.weapon)
-		pickup_target.queue_free()
-	
-	if can_attack():
-		perform_attack(slot, weapon_nodes[weapons[slot]].get_attack())
-	else:
-		buffer_attack(slot)
-	
+		if pickup_target and weapons[slot] == "" and !weapons.has(pickup_target.weapon_id):
+			set_weapon(slot, pickup_target.weapon_id)
+			pickup_target.queue_free()
+		
+		if can_attack():
+			perform_attack(slot, weapon_nodes[weapons[slot]].get_attack())
+		else:
+			buffer_attack(slot)
+		
 
 
 func buffer_attack(slot: int):
@@ -407,17 +407,12 @@ func buffer_attack(slot: int):
 	buffer_time = 7
 
 func perform_attack(slot: int, attack: String):
-	#if on_ground:
-	#	velocity = Vector2()
-
 	current_weapon = weapons[slot]
 	current_attack = attack
-	
 	weapon_nodes[weapons[slot]].attack(attack)
-	
-	if !weapon_inputs[slot]:
-		weapon_nodes[weapons[slot]].input_released()
-	
+
+func release_attack(slot: int):
+	weapon_nodes[weapons[slot]].input_released()
 
 func _on_attack_finished():
 	current_attack = ""
@@ -425,16 +420,25 @@ func _on_attack_finished():
 
 
 func process_throw():
-	if throw:
-		#throw_time = min(throw_time + delta, 1)
-		
-		var direction = Vector2(h_tilt, v_tilt)
-		if !direction:
-			direction = Vector2(1, -1)
-		$ThrowIcon.position = direction.normalized() * 64
-		$ThrowIcon.rotation = direction.angle()
+	throw = can_attack() and get_input().throw
+	$ThrowIcon.visible = throw
 	
-	$ThrowIcon.visible = throw and !current_attack
+	if !throw:
+		return
+	
+	#throw_time = min(throw_time + delta, 1)
+	
+	var direction = Vector2(h_tilt, v_tilt)
+	if !direction:
+		direction = Vector2(1, -1)
+	$ThrowIcon.position = direction.normalized() * 64
+	$ThrowIcon.rotation = direction.angle()
+	
+	if !current_attack:
+		if weapon_just_pressed[0]:
+			throw_weapon(0)
+		if weapon_just_pressed[1]:
+			throw_weapon(1)
 	
 
 func throw_weapon(slot: int):
@@ -442,7 +446,7 @@ func throw_weapon(slot: int):
 		return
 	
 	var item = load("res://weapon_masters/item/item_container.tscn").instance()
-	item.weapon = weapons[slot]
+	item.weapon_id = weapons[slot]
 	
 	var direction = directional_input.normalized()
 	if !direction:
