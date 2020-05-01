@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://ui/h_selector.gd" type="Script" id=1]
 
+[sub_resource type="Theme" id=8]
+
 [sub_resource type="GDScript" id=1]
-script/source = "extends Panel
+script/source = "extends Control
 
 signal player_ready()
 
@@ -15,21 +17,14 @@ func _ready():
 	
 	# display controls
 	$Scroll/VBox/Controls.text = (
-		\"Arrow Keys: Move/Tilt\\n\" +
-		\"W: Jump/Dodge\\n\" +
-		\"E: Weapon 1\\n\" +
-		\"D: Weapon 2\\n\" +
-		\"A: Item [WIP]\\n\" +
-		\"Q: Shield [WIP]\\n\" +
-		\"Left Shift: Throw [WIP]\"
-		if controller.keyboard else
-		\"Left Stick: Move/Tilt\\n\" +
-		\"LB: Jump/Dodge\\n\" +
-		\"B: Weapon 1\\n\" +
-		\"A: Weapon 2\\n\" +
-		\"X: Item [WIP]\\n\" +
-		\"RB: Shield [WIP]\\n\" +
-		\"RT: Throw [WIP]\")
+		\"Move: \" + get_directional_input_name(0) + \"\\n\" +
+		\"Tilt: \" + get_directional_input_name(1) + \"\\n\" +
+		\"Jump/Dodge: \" + list_buttons(controller.button_settings.jump) + \"\\n\" +
+		\"Weapon 1: \" + list_buttons(controller.button_settings.weapon_1) + \"\\n\" +
+		\"Weapon 2: \" + list_buttons(controller.button_settings.weapon_2) + \"\\n\" +
+		#\"Item: \" + list_buttons(controller.button_settings.item) + \"\\n\" +
+		\"Guard [WIP]: \" + list_buttons(controller.button_settings.guard) + \"\\n\" +
+		\"Throw: \" + list_buttons(controller.button_settings.throw))
 	
 	# color selection
 	for i in Globals.colors:
@@ -37,6 +32,8 @@ func _ready():
 		node.color = i
 		node.rect_min_size = Vector2(16, 16)
 		$Scroll/VBox/ColorSelection/HBox.add_child(node)
+	
+	$Scroll/VBox/ColorSelection.value = Globals.colors.find(controller.color)
 	
 	# weapon selection
 	var min_level = WeaponResource.Level.FLIMSY
@@ -60,6 +57,50 @@ func _on_focus_changed(new_focus: Control):
 	pass
 
 
+
+func get_directional_input_name(axis: int) -> String:
+	var stick = controller.stick_settings
+	if controller.keyboard:
+		return \"%s/%s\" % [
+			get_button_name(stick.left if axis == 0 else stick.up),
+			get_button_name(stick.right if axis == 0 else stick.down)]
+	else:
+		match (stick.stick_x if axis == 0 else stick.stick_y):
+			JOY_ANALOG_LX: return \"Left Stick L/R\"
+			JOY_ANALOG_LY: return \"Left Stick U/D\"
+			JOY_ANALOG_RX: return \"Right Stick L/R\"
+			JOY_ANALOG_RY: return \"Right Stick U/D\"
+			JOY_ANALOG_L2: return \"Left Trigger\"
+			JOY_ANALOG_R2: return \"Right Trigger\"
+			_ : return \"?\"
+
+func list_buttons(array: Array):
+	if array.empty():
+		return \"None\"
+	
+	var text = get_button_name(array[0])
+	
+	for i in range(1, array.size()):
+		text += \"/\" + get_button_name(array[i])
+	
+	return text
+
+func get_button_name(index: int) -> String:
+	if controller.keyboard:
+		return OS.get_scancode_string(index)
+	
+	match index:
+		JOY_XBOX_B: return \"B\"
+		JOY_XBOX_A: return \"A\"
+		JOY_XBOX_X: return \"X\"
+		JOY_XBOX_Y: return \"Y\"
+		JOY_L: return \"LB\"
+		JOY_L2: return \"LT\"
+		JOY_L3: return \"Left Stick\"
+		JOY_R: return \"RB\"
+		JOY_R2: return \"RT\"
+		JOY_R3: return \"Right Stick\"
+		_ : return \"?\"
 
 func _on_ColorSelection_value_changed(value):
 	controller.color = Globals.colors[value]
@@ -108,7 +149,7 @@ content_margin_left = 2.0
 content_margin_right = 2.0
 content_margin_top = 2.0
 content_margin_bottom = 2.0
-bg_color = Color( 0.6, 0.6, 0.6, 0.25098 )
+bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
 
 [sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 1, 1, 1, 1 )
@@ -129,19 +170,39 @@ bg_color = Color( 0.6, 0.6, 0.6, 0.501961 )
 [sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0.6, 0.6, 0.6, 0.25098 )
 
-[node name="Control" type="Panel"]
-margin_right = 160.0
-margin_bottom = 240.0
-rect_min_size = Vector2( 160, 240 )
+[node name="Control" type="Control"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+theme = SubResource( 8 )
 script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -80.0
+margin_top = -240.0
+margin_right = 80.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Label" type="Label" parent="."]
-anchor_right = 1.0
-margin_top = -16.0
-margin_bottom = -2.0
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -80.0
+margin_top = -256.0
+margin_right = 80.0
+margin_bottom = -242.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 1
 text = "Player 1"
@@ -151,12 +212,14 @@ __meta__ = {
 }
 
 [node name="Scroll" type="ScrollContainer" parent="."]
-anchor_right = 1.0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = 2.0
-margin_top = 2.0
-margin_right = -2.0
-margin_bottom = -2.0
+margin_left = -76.0
+margin_top = -236.0
+margin_right = 76.0
+margin_bottom = -4.0
 scroll_horizontal_enabled = false
 script = SubResource( 2 )
 __meta__ = {
@@ -164,27 +227,20 @@ __meta__ = {
 }
 
 [node name="VBox" type="VBoxContainer" parent="Scroll"]
-margin_right = 156.0
+margin_right = 152.0
 margin_bottom = 200.0
 size_flags_horizontal = 3
 custom_constants/separation = 2
 script = SubResource( 3 )
 
 [node name="Controls" type="Label" parent="Scroll/VBox"]
-margin_right = 156.0
-margin_bottom = 116.0
-text = "Arrow Keys: Move/Tilt
-W: Jump/Dodge
-E: Weapon 1
-D: Weapon 2
-A: Item [WIP]
-Q: Shield [WIP]
-Left Shift: Throw [WIP]"
+margin_right = 152.0
+margin_bottom = 14.0
 
 [node name="ColorSelection" type="Control" parent="Scroll/VBox"]
-margin_top = 118.0
-margin_right = 156.0
-margin_bottom = 142.0
+margin_top = 16.0
+margin_right = 152.0
+margin_bottom = 40.0
 rect_min_size = Vector2( 0, 24 )
 script = ExtResource( 1 )
 wrap_around = true
@@ -205,9 +261,9 @@ __meta__ = {
 }
 
 [node name="Weapon1Selection" type="Control" parent="Scroll/VBox"]
-margin_top = 144.0
-margin_right = 156.0
-margin_bottom = 184.0
+margin_top = 42.0
+margin_right = 152.0
+margin_bottom = 82.0
 rect_min_size = Vector2( 0, 40 )
 focus_neighbour_top = NodePath("../ReadyButton")
 script = ExtResource( 1 )
@@ -229,9 +285,9 @@ __meta__ = {
 }
 
 [node name="ReadyButton" type="Button" parent="Scroll/VBox"]
-margin_top = 186.0
-margin_right = 156.0
-margin_bottom = 200.0
+margin_top = 84.0
+margin_right = 152.0
+margin_bottom = 98.0
 focus_mode = 0
 custom_styles/pressed = SubResource( 6 )
 custom_styles/normal = SubResource( 7 )

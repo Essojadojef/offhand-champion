@@ -1,12 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://ui/health.png" type="Texture" id=1]
 [ext_resource path="res://ui/super_1.png" type="Texture" id=2]
-
-
+[ext_resource path="res://ui/weapon_background.png" type="Texture" id=3]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends Panel
+script/source = "extends Control
 
 var controller
 
@@ -25,17 +24,13 @@ func _physics_process(delta: float) -> void:
 	$Health.value = player.health / player.max_health * $Health.max_value
 	$Lives/Label.text = str(player.lives)
 	
-	#if get_player_entity().weapons[0]:
-	$Weapon1.show()
-	$Weapon1.text = player.get_weapon_node(0).name
-	#else:
-	#	$Weapon1.hide()
+	var weapon = player.weapons[0]
+	$Weapon1/Name.text = player.get_weapon_node(0).name if weapon else \"Free\"
+	$Weapon1/Icon.texture = Globals.get_weapon(weapon).icon if weapon else null
 	
-	#if get_player_entity().weapons[1]:
-	$Weapon2.show()
-	$Weapon2.text = player.get_weapon_node(1).name
-	#else:
-	#	$Weapon2.hide()
+	weapon = player.weapons[1]
+	$Weapon2/Name.text = player.get_weapon_node(1).name if weapon else \"Free\"
+	$Weapon2/Icon.texture = Globals.get_weapon(weapon).icon if weapon else null
 	
 
 "
@@ -50,70 +45,36 @@ expand_margin_right = 1.0
 expand_margin_top = 1.0
 expand_margin_bottom = 1.0
 
-[node name="Panel" type="Panel"]
-margin_right = 120.0
-margin_bottom = 120.0
-rect_min_size = Vector2( 160, 240 )
+[node name="Panel" type="Control"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
 script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Name" type="Label" parent="."]
+[node name="Bg" type="Panel" parent="."]
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-margin_left = -25.5
-margin_right = 25.5
-margin_bottom = 14.0
-grow_horizontal = 2
-grow_vertical = 2
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "Player 1"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Weapon1" type="Label" parent="."]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_top = -47.0
-margin_right = 51.0
-margin_bottom = -33.0
-grow_vertical = 2
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "W1"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Weapon2" type="Label" parent="."]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_top = 33.0
-margin_right = 51.0
-margin_bottom = 47.0
-grow_vertical = 2
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "W2"
-valign = 1
+anchor_bottom = 1.0
+margin_left = -80.0
+margin_top = -240.0
+margin_right = 80.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
-anchor_right = 1.0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = 10.0
-margin_right = -10.0
+margin_left = -70.0
+margin_top = -230.0
+margin_right = 70.0
 margin_bottom = -10.0
 stretch = true
 __meta__ = {
@@ -129,11 +90,14 @@ render_target_update_mode = 3
 current = true
 
 [node name="Health" type="ProgressBar" parent="."]
-anchor_right = 1.0
-margin_left = 24.0
-margin_top = -24.0
-margin_right = 8.0
-margin_bottom = -8.0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -56.0
+margin_top = -264.0
+margin_right = 88.0
+margin_bottom = -248.0
 custom_styles/fg = SubResource( 2 )
 custom_styles/bg = SubResource( 3 )
 value = 1.0
@@ -143,9 +107,14 @@ __meta__ = {
 }
 
 [node name="Lives" type="TextureRect" parent="."]
-margin_left = -8.0
-margin_top = -32.0
-margin_right = 24.0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -88.0
+margin_top = -272.0
+margin_right = -56.0
+margin_bottom = -240.0
 texture = ExtResource( 1 )
 expand = true
 stretch_mode = 1
@@ -163,13 +132,14 @@ align = 1
 valign = 1
 
 [node name="TextureProgress" type="TextureProgress" parent="."]
-visible = false
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
+anchor_bottom = 1.0
 margin_left = -64.0
-margin_top = -80.0
+margin_top = -320.0
 margin_right = 64.0
-margin_bottom = -16.0
+margin_bottom = -256.0
 value = 30.0
 texture_under = ExtResource( 2 )
 texture_progress = ExtResource( 2 )
@@ -177,3 +147,102 @@ tint_under = Color( 0.501961, 0.25098, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Name" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -25.5
+margin_top = -14.0
+margin_right = 25.5
+grow_horizontal = 2
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Player 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weapon1" type="TextureRect" parent="."]
+self_modulate = Color( 0.380392, 0.380392, 0.392157, 1 )
+show_behind_parent = true
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 72.0
+margin_top = -192.0
+margin_right = 136.0
+margin_bottom = -128.0
+texture = ExtResource( 3 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="Weapon1"]
+margin_left = 8.0
+margin_top = 36.0
+margin_right = 72.0
+margin_bottom = 68.0
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Weapon 1"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="TextureRect" parent="Weapon1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -16.0
+margin_top = -16.0
+margin_right = 16.0
+margin_bottom = 16.0
+
+[node name="Weapon2" type="TextureRect" parent="."]
+self_modulate = Color( 0.262745, 0.262745, 0.278431, 1 )
+show_behind_parent = true
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 72.0
+margin_top = -112.0
+margin_right = 136.0
+margin_bottom = -48.0
+texture = ExtResource( 3 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="Weapon2"]
+margin_left = 8.0
+margin_top = 36.0
+margin_right = 72.0
+margin_bottom = 68.0
+grow_vertical = 2
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Weapon 2"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="TextureRect" parent="Weapon2"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -16.0
+margin_top = -16.0
+margin_right = 16.0
+margin_bottom = 16.0
