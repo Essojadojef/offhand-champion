@@ -171,15 +171,21 @@ class Player extends Node2D:
 				"down": KEY_S,
 				"heavy_time": 5
 			} if keyboard else {
-				"stick_x": JOY_AXIS_0,
-				"stick_y": JOY_AXIS_1,
+				"stick_x": JOY_ANALOG_LX,
+				"stick_y": JOY_ANALOG_LY,
 				"deadzone": .8,
 				"heavy_time": 5
 			}
 		button_settings = {
+				#"jump": [KEY_KP_0],
+				#"weapon_1": [KEY_KP_5],
+				#"weapon_2": [KEY_KP_1],
+				#"item": [KEY_KP_2],
+				#"guard": [KEY_KP_6],
+				#"throw": [KEY_KP_ADD]
 				"jump": [KEY_SPACE],
-				"weapon_1": [KEY_J],
-				"weapon_2": [KEY_I],
+				"weapon_1": [KEY_I],
+				"weapon_2": [KEY_J],
 				"item": [KEY_K],
 				"guard": [KEY_O],
 				"throw": [KEY_P]
