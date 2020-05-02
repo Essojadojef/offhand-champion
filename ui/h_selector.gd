@@ -7,10 +7,15 @@ export var wrap_around : bool = false
 export(int, "No", "Value", "Child Name") var display_text : int = 1
 export(int, "Top", "Center", "Bottom") var text_valign : int = 1
 
+export var container : NodePath
+export var label : NodePath
 export var bg_stylebox : StyleBox
 export var selected_stylebox : StyleBox
 
 signal value_changed(value)
+
+func _ready():
+	connect("resized", self, "update", [], CONNECT_DEFERRED)
 
 func get_minimum_size():
 	return Vector2(0, 20)
@@ -29,7 +34,7 @@ func _gui_input(event: InputEvent):
 		
 
 func get_max_value() -> int:
-	return $HBox.get_child_count()
+	return get_node(container).get_child_count()
 
 func set_value(_value: int):
 	if get_max_value() <= 0:
@@ -49,28 +54,17 @@ func _draw():
 	var node_rect = Rect2(Vector2(), rect_size)
 	draw_style_box(bg_stylebox, node_rect)
 	
-	if $HBox.get_child_count() > value:
-		var rect = $HBox.get_child(value).get_global_rect()
-		rect.position -= get_global_rect().position
-		draw_style_box(selected_stylebox, rect)
+	var rect = get_node(container).get_child(value).get_global_rect()
+	rect.position -= get_global_rect().position
+	draw_style_box(selected_stylebox, rect)
 	
 	var contents_rect = node_rect.grow_individual(
 		-bg_stylebox.get_margin(MARGIN_LEFT), -bg_stylebox.get_margin(MARGIN_TOP),
 		-bg_stylebox.get_margin(MARGIN_RIGHT), -bg_stylebox.get_margin(MARGIN_BOTTOM))
 	
-	if !display_text:
-		return
-	
-	var font = get_font("")
-	var string = "%d/%d" % [value + 1, get_max_value()]
-	
-	var pos = contents_rect.position
-	pos.x += (contents_rect.size.x - font.get_string_size(string).x) / 2
-	match text_valign:
-		0: pos.y += font.get_ascent()
-		1: pos.y = (contents_rect.size.y + font.get_string_size(string).y) / 2
-		2: pos.y = contents_rect.end.y
-	
-	draw_string(font, pos, string)
-	
+	if label and get_node(label):
+		match display_text:
+			1: get_node(label).text = "%d/%d" % [value + 1, get_max_value()]
+			2: get_node(label).text = get_node(container).get_child(value).name
+		
 
