@@ -1,8 +1,6 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://ui/h_selector.gd" type="Script" id=1]
-
-[sub_resource type="Theme" id=8]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -59,13 +57,14 @@ func _on_focus_changed(new_focus: Control):
 
 
 func get_directional_input_name(axis: int) -> String:
-	var stick = controller.stick_settings
 	if controller.keyboard:
-		return \"%s/%s\" % [
-			get_button_name(stick.left if axis == 0 else stick.up),
-			get_button_name(stick.right if axis == 0 else stick.down)]
+		var settings = controller.button_settings
+		return \"%s %s\" % [
+			list_buttons(settings.left if axis == 0 else settings.up),
+			list_buttons(settings.right if axis == 0 else settings.down)]
 	else:
-		match (stick.stick_x if axis == 0 else stick.stick_y):
+		var settings = controller.stick_settings
+		match (settings.stick_x if axis == 0 else settings.stick_y):
 			JOY_ANALOG_LX: return \"Left Stick L/R\"
 			JOY_ANALOG_LY: return \"Left Stick U/D\"
 			JOY_ANALOG_RX: return \"Right Stick L/R\"
@@ -175,7 +174,6 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
-theme = SubResource( 8 )
 script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -228,7 +226,7 @@ __meta__ = {
 
 [node name="VBox" type="VBoxContainer" parent="Scroll"]
 margin_right = 152.0
-margin_bottom = 200.0
+margin_bottom = 98.0
 size_flags_horizontal = 3
 custom_constants/separation = 2
 script = SubResource( 3 )

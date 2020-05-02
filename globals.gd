@@ -138,6 +138,7 @@ class Player extends Node2D:
 	
 	var stick_settings = {}
 	var button_settings = {}
+	var heavy_time = .5
 	signal controls_changed(controls)
 	
 	var match_settings = {}
@@ -161,28 +162,25 @@ class Player extends Node2D:
 		
 		# set dafault controls
 		stick_settings = {
-				#"left": KEY_LEFT,
-				#"right": KEY_RIGHT,
-				#"up": KEY_UP,
-				#"down": KEY_DOWN,
-				"left": KEY_A,
-				"right": KEY_D,
-				"up": KEY_W,
-				"down": KEY_S,
-				"heavy_time": 5
-			} if keyboard else {
 				"stick_x": JOY_ANALOG_LX,
 				"stick_y": JOY_ANALOG_LY,
-				"deadzone": .8,
-				"heavy_time": 5
+				"deadzone": .5
 			}
 		button_settings = {
+				#"left": [KEY_LEFT],
+				#"right": [KEY_RIGHT],
+				#"up": [KEY_UP],
+				#"down": [KEY_DOWN],
 				#"jump": [KEY_KP_0],
 				#"weapon_1": [KEY_KP_5],
 				#"weapon_2": [KEY_KP_1],
 				#"item": [KEY_KP_2],
 				#"guard": [KEY_KP_6],
 				#"throw": [KEY_KP_ADD]
+				"left": [KEY_A],
+				"right": [KEY_D],
+				"up": [KEY_W],
+				"down": [KEY_S],
 				"jump": [KEY_SPACE],
 				"weapon_1": [KEY_I],
 				"weapon_2": [KEY_J],
@@ -190,7 +188,11 @@ class Player extends Node2D:
 				"guard": [KEY_O],
 				"throw": [KEY_P]
 			} if keyboard else {
-				"jump": [JOY_L],
+				"left": [],
+				"right": [],
+				"up": [],
+				"down": [],
+				"jump": [JOY_L, JOY_L2],
 				"weapon_1": [JOY_XBOX_B],
 				"weapon_2": [JOY_XBOX_A],
 				"item": [JOY_XBOX_X],
@@ -256,21 +258,40 @@ class Player extends Node2D:
 	# x_axis: -1 = left, 1 = right
 	# y_axis: -1 = up, 1 = down
 	func get_directional_input() -> Vector2:
+		var left = false
+		var right = false
+		var up = false
+		var down = false
+		
+		var stick = get_stick_input()
+		
+		if stick:
+			right = abs(stick.angle()) < 3*PI/8
+			left = abs(stick.angle()) > 5*PI/8
+			if abs(stick.angle()) > PI/8 and abs(stick.angle()) < 7*PI/8:
+				up = sign(stick.angle()) < 0
+				down = sign(stick.angle()) > 0
+		
+		if button_settings.left:
+			left = get_button_input("left")
+		if button_settings.right:
+			right = get_button_input("right")
+		if button_settings.up:
+			up = get_button_input("up")
+		if button_settings.down:
+			down = get_button_input("down")
+		
+		return Vector2(int(right) - int(left), int(down) - int(up))
+	
+	func get_stick_input() -> Vector2:
 		if keyboard:
-			var left = Input.is_key_pressed(stick_settings.left)
-			var right = Input.is_key_pressed(stick_settings.right)
-			var up = Input.is_key_pressed(stick_settings.up)
-			var down = Input.is_key_pressed(stick_settings.down)
-			return Vector2(int(right) - int(left), int(down) - int(up))
-		else:
-			var value = Vector2(
-				Input.get_joy_axis(device, stick_settings.stick_x),
-				Input.get_joy_axis(device, stick_settings.stick_y))
-			
-			if value.length() < stick_settings.deadzone:
-				return Vector2()
-			
-			return value.round()
+			return Vector2()
+		
+		var value = Vector2(
+			Input.get_joy_axis(device, stick_settings.stick_x),
+			Input.get_joy_axis(device, stick_settings.stick_y))
+		
+		return value if value.length() >= stick_settings.deadzone else Vector2()
 	
 	func get_button_input(action: String) -> bool:
 		for i in button_settings[action]:
