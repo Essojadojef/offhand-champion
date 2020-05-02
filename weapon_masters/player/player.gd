@@ -258,16 +258,17 @@ func process_skeleton():
 	elif !on_ground:
 		$AnimationPlayer.play("jump")
 		
-	elif !dodge_time:
-		# animation
-		var anim_name = "walk" if h_tilt == 1 else "walk_backwards" if h_tilt == -1 else "stand"
-		$AnimationPlayer.play(anim_name)
+	elif throw or !h_tilt:
+		$AnimationPlayer.play("stand")
+		
+	else:
+		$AnimationPlayer.play("walk" if h_tilt == 1 else "walk_backwards")
 		
 		#$Skeleton/Head/Face.position.y = tilt * 4 # move face while tilting
 		
 
 func process_movement(delta):
-	if current_attack:
+	if current_attack or throw:
 		if on_ground:
 			velocity.x = 0
 		
