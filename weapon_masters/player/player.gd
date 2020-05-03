@@ -102,7 +102,11 @@ func _ready():
 	#load_item( load("res://weapons/spear/nodes.tscn").instance(), "spear" )
 	#load_item( load("res://weapons/knife/nodes.tscn").instance(), "knife" )
 	
+	controller.set_physics_process(true)
 
+func _exit_tree():
+	controller.set_physics_process(false)
+	controller.clear_input_buffer()
 
 
 

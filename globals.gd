@@ -155,6 +155,7 @@ class Player extends Node2D:
 	
 	func _init(_device: int):
 		process_priority = -1 # callbacks are executed first in this node
+		set_physics_process(false) # _physics_process will be activated when a game starts
 		
 		device = _device
 		keyboard = device == -1
@@ -232,8 +233,6 @@ class Player extends Node2D:
 		return current_input
 	
 	func _physics_process(delta):
-		if !focus is KinematicBody2D: return
-		
 		input_buffer_index += 1
 		if input_buffer_index >= input_buffer_frames:
 			input_buffer_index = 0
