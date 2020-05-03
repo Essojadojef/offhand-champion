@@ -62,7 +62,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Weapon Masters"
+config/name="Offhand Champion"
 run/main_scene="res://fight_gui.tscn"
 config/icon="res://icon.png"
 
