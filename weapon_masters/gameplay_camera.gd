@@ -2,7 +2,11 @@ extends Camera2D
 class_name GameplayCamera
 
 func _process(delta):
-	var entities = get_tree().get_nodes_in_group("player_entities")
+	var entities = []
+	
+	for i in get_tree().get_nodes_in_group("player_entities"):
+		if get_viewport() == i.get_viewport():
+			entities.append(i)
 	
 	if entities.empty():return
 	
