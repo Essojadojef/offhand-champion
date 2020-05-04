@@ -15,6 +15,7 @@ func _on_player_added(controller):
 	setup_panel.connect(\"player_ready\", self, \"_on_player_ready\", [controller, setup_panel])
 	
 	$PlayerPanels.add_child(setup_panel)
+	setup_panel.grab_controller_focus()
 
 func _on_player_ready(controller: Globals.Player, setup_panel: Control):
 	
