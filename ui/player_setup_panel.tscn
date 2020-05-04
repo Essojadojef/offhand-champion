@@ -243,6 +243,7 @@ rect_min_size = Vector2( 0, 24 )
 script = ExtResource( 1 )
 wrap_around = true
 display_text = 0
+container = NodePath("HBox")
 bg_stylebox = SubResource( 4 )
 selected_stylebox = SubResource( 5 )
 
@@ -267,6 +268,7 @@ focus_neighbour_top = NodePath("../ReadyButton")
 script = ExtResource( 1 )
 wrap_around = true
 display_text = 0
+container = NodePath("HBox")
 bg_stylebox = SubResource( 4 )
 selected_stylebox = SubResource( 5 )
 
