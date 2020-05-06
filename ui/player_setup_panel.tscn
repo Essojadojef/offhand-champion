@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://ui/h_selector.gd" type="Script" id=1]
+[ext_resource path="res://weapon_masters/player/player.tscn" type="PackedScene" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -9,29 +10,86 @@ signal player_ready()
 
 var controller : Globals.Player
 
+
+func grab_controller_focus():
+	show_main()
+
+
+func _on_ColorSelection_value_changed(value):
+	controller.color = Globals.colors[value]
+
+func _on_Weapon1Selection_value_changed(value):
+	var container = $Main/Scroll/VBox/Weapon1Selection/HBox
+	var id = container.get_child(value).get_meta(\"id\")
+	controller.match_settings.weapon1 = id
+
+
+
+func _on_ReadyButton_pressed():
+	emit_signal(\"player_ready\")
+
+
+
+
+
+
+func _on_ChangeControls_pressed():
+	show_settings()
+
+func _on_Settings_done():
+	show_main()
+
+
+func show_main():
+	$Main.show()
+	$Settings.hide()
+	
+	controller.focus = $Main/VBox.get_child(0)
+	controller.emit_signal(\"focus_changed\")
+
+func show_settings():
+	$Main.hide()
+	$Settings.show()
+	
+	controller.focus = $Settings/Tree
+	controller.emit_signal(\"focus_changed\")
+"
+
+[sub_resource type="StyleBoxFlat" id=18]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends ScrollContainer
+
+onready var controller = get_parent().controller
+
 func _ready():
-	controller.focus = $Scroll/VBox.get_child(0)
-	controller.connect(\"focus_changed\", self, \"_on_focus_changed\")
+	controller.connect(\"focus_changed\", self, \"_on_focus_changed\", [], CONNECT_DEFERRED)
 	
 	# display controls
-	$Scroll/VBox/Controls.text = (
+	$VBox/Controls.text = (
+		\"Controls (select to change)\\n\" +
 		\"Move: \" + get_directional_input_name(0) + \"\\n\" +
 		\"Tilt: \" + get_directional_input_name(1) + \"\\n\" +
-		\"Jump/Dodge: \" + list_buttons(controller.button_settings.jump) + \"\\n\" +
-		\"Weapon 1: \" + list_buttons(controller.button_settings.weapon_1) + \"\\n\" +
-		\"Weapon 2: \" + list_buttons(controller.button_settings.weapon_2) + \"\\n\" +
-		#\"Item: \" + list_buttons(controller.button_settings.item) + \"\\n\" +
-		\"Guard [WIP]: \" + list_buttons(controller.button_settings.guard) + \"\\n\" +
-		\"Throw: \" + list_buttons(controller.button_settings.throw))
+		\"Jump/Dodge: \" + controller.list_buttons(\"jump\") + \"\\n\" +
+		\"Weapon 1: \" + controller.list_buttons(\"weapon_1\") + \"\\n\" +
+		\"Weapon 2: \" + controller.list_buttons(\"weapon_2\") + \"\\n\" +
+		#\"Item: \" + controller.list_buttons(\"item\") + \"\\n\" +
+		\"Guard [WIP]: \" + controller.list_buttons(\"guard\") + \"\\n\" +
+		\"Throw: \" + controller.list_buttons(\"throw\"))
 	
 	# color selection
 	for i in Globals.colors:
 		var node = ColorRect.new()
 		node.color = i
 		node.rect_min_size = Vector2(16, 16)
-		$Scroll/VBox/ColorSelection/HBox.add_child(node)
+		$VBox/ColorSelection/HBox.add_child(node)
 	
-	$Scroll/VBox/ColorSelection.value = Globals.colors.find(controller.color)
+	$VBox/ColorSelection.value = Globals.colors.find(controller.color)
 	
 	# weapon selection
 	var min_level = WeaponResource.Level.FLIMSY
@@ -46,128 +104,264 @@ func _ready():
 		node.texture = Globals.get_weapon(i).icon
 		node.rect_min_size = Vector2(16, 16)
 		node.set_meta(\"id\", i)
-		$Scroll/VBox/Weapon1Selection/HBox.add_child(node)
+		$VBox/Weapon1Selection/HBox.add_child(node)
 	
 	controller.match_settings.weapon1 = \"sword\"
 
-func _on_focus_changed(new_focus: Control):
-	#$Scroll.set_v_scroll(new_focus.rect_position.y)
-	pass
-
-
-
 func get_directional_input_name(axis: int) -> String:
 	if controller.keyboard:
-		var settings = controller.button_settings
 		return \"%s %s\" % [
-			list_buttons(settings.left if axis == 0 else settings.up),
-			list_buttons(settings.right if axis == 0 else settings.down)]
+		controller.list_buttons(\"left\" if axis == 0 else \"up\"),
+		controller.list_buttons(\"right\" if axis == 0 else \"down\")]
 	else:
-		var settings = controller.stick_settings
-		match (settings.stick_x if axis == 0 else settings.stick_y):
-			JOY_ANALOG_LX: return \"Left Stick L/R\"
-			JOY_ANALOG_LY: return \"Left Stick U/D\"
-			JOY_ANALOG_RX: return \"Right Stick L/R\"
-			JOY_ANALOG_RY: return \"Right Stick U/D\"
-			JOY_ANALOG_L2: return \"Left Trigger\"
-			JOY_ANALOG_R2: return \"Right Trigger\"
-			_ : return \"?\"
-
-func list_buttons(array: Array):
-	if array.empty():
-		return \"None\"
-	
-	var text = get_button_name(array[0])
-	
-	for i in range(1, array.size()):
-		text += \"/\" + get_button_name(array[i])
-	
-	return text
-
-func get_button_name(index: int) -> String:
-	if controller.keyboard:
-		return OS.get_scancode_string(index)
-	
-	match index:
-		JOY_XBOX_B: return \"B\"
-		JOY_XBOX_A: return \"A\"
-		JOY_XBOX_X: return \"X\"
-		JOY_XBOX_Y: return \"Y\"
-		JOY_L: return \"LB\"
-		JOY_L2: return \"LT\"
-		JOY_L3: return \"Left Stick\"
-		JOY_R: return \"RB\"
-		JOY_R2: return \"RT\"
-		JOY_R3: return \"Right Stick\"
-		_ : return \"?\"
-
-func _on_ColorSelection_value_changed(value):
-	controller.color = Globals.colors[value]
-	$Scroll.update()
-
-func _on_Weapon1Selection_value_changed(value):
-	var container = $Scroll/VBox/Weapon1Selection/HBox
-	var id = container.get_child(value).get_meta(\"id\")
-	controller.match_settings.weapon1 = id
+		return controller.get_stick_axis_name(
+			controller.stick_settings.stick_x if axis == 0 else
+			controller.stick_settings.stick_y)
 
 
 
-func _on_ReadyButton_pressed():
-	emit_signal(\"player_ready\")
-
-
-
-
+func _on_focus_changed(new_focus: Control):
+	if is_a_parent_of(new_focus):
+		set_v_scroll(new_focus.rect_position.y - rect_size.y / 2)
+		
 "
 
-[sub_resource type="GDScript" id=2]
-script/source = "extends ScrollContainer
-
-func _ready():
-	#get_v_scrollbar().rect_min_size.x = 2
-	pass
-"
-
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=4]
 script/source = "extends VBoxContainer
 
 func _ready():
 	
-	for i in get_child_count():
-		if i != 0:
-			var path = get_child(i).get_path_to(get_child(i - 1))
-			get_child(i).focus_neighbour_top = path
-			
-		if i != get_child_count() -1:
-			var path = get_child(i).get_path_to(get_child(i + 1))
-			get_child(i).focus_neighbour_bottom = path
+	#for i in get_child_count():
+	#	if i != 0:
+	#		var path = get_child(i).get_path_to(get_child(i - 1))
+	#		get_child(i).focus_neighbour_top = path
+	#		
+	#	if i != get_child_count() -1:
+	#		var path = get_child(i).get_path_to(get_child(i + 1))
+	#		get_child(i).focus_neighbour_bottom = path
+	
+	var nodes = get_children()
+	for i in range(-2, get_child_count() - 1):
+		
+		var path = nodes[i].get_path_to(nodes[i - 1])
+		nodes[i].focus_neighbour_top = path
+		
+		path = nodes[i].get_path_to(nodes[i + 1])
+		nodes[i].focus_neighbour_bottom = path
+	
 "
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=17]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
 content_margin_left = 2.0
 content_margin_right = 2.0
 content_margin_top = 2.0
 content_margin_bottom = 2.0
 bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
 
-[sub_resource type="StyleBoxFlat" id=5]
-bg_color = Color( 1, 1, 1, 1 )
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color( 1, 1, 1, 1 )
-expand_margin_left = 2.0
-expand_margin_right = 2.0
-expand_margin_top = 2.0
-expand_margin_bottom = 2.0
-
-[sub_resource type="StyleBoxFlat" id=6]
+[sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0.6, 0.6, 0.6, 0.501961 )
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="StyleBoxFlat" id=19]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
+
+[sub_resource type="StyleBoxFlat" id=20]
+bg_color = Color( 0.6, 0.6, 0.6, 0.501961 )
+
+[sub_resource type="StyleBoxFlat" id=21]
 bg_color = Color( 0.6, 0.6, 0.6, 0.25098 )
+
+[sub_resource type="StyleBoxFlat" id=22]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="GDScript" id=23]
+script/source = "extends Control
+
+var controller
+
+signal done()
+
+func _enter_tree():
+	controller = get_parent().controller
+	$ViewportContainer/Viewport/Player.controller = controller
+	$Tree.connect(\"item_activated\", self, \"_on_item_activated\")
+	
+	focus_mode = Control.FOCUS_ALL
+
+func _on_item_activated():
+	var selected_item = $Tree.get_selected()
+	
+	if !(selected_item and selected_item.has_meta(\"function\")):
+		return
+	
+	match selected_item.get_meta(\"function\"):
+		\"remove\":
+			var action = selected_item.get_meta(\"action\")
+			var button = selected_item.get_meta(\"button\")
+			controller.button_settings[action].erase(button)
+			$Tree.list_settings()
+			
+		\"add\":
+			bind_input(selected_item.get_meta(\"action\"))
+			
+		\"reset\":
+			pass
+		\"done\":
+			emit_signal(\"done\")
+	
+
+func bind_input(action):
+	$Label.text = (
+		\"Press the button you want to bind to %s\" % action.capitalize())
+	$Label.show()
+	controller.focus = $Label
+	
+	grab_focus()
+	
+	while true:
+		var input_event = yield(self, \"gui_input\")
+		
+		print(input_event)
+		
+		if !input_event.pressed or input_event.echo:
+			continue
+		
+		if controller.keyboard and input_event is InputEventKey:
+			controller.button_settings[action].append(input_event.scancode)
+			accept_event()
+			break
+		
+		if !controller.keyboard and !(input_event is InputEventJoypadButton):
+			controller.button_settings[action].append(input_event.button_index)
+			accept_event()
+			break
+		
+	
+	$Label.hide()
+	controller.focus = $Tree
+	
+	release_focus()
+	
+	$Tree.list_settings()
+	
+"
+
+[sub_resource type="StyleBoxFlat" id=24]
+bg_color = Color( 0.380392, 0.380392, 0.392157, 1 )
+
+[sub_resource type="GDScript" id=25]
+script/source = "extends Tree
+
+func _ready():
+	list_settings()
+
+func list_settings():
+	var controller = get_parent().controller
+	clear()
+	
+	var root = create_item()
+	
+	for action in [\"jump\", \"weapon_1\", \"weapon_2\", \"guard\", \"throw\"]:
+		var item = create_item(root)
+		item.collapsed = true
+		
+		item.set_text(0, action.capitalize())
+		var buttons = \"\"
+		
+		for button in controller.button_settings[action]:
+			var remove = create_item(item)
+			var button_name = OS.get_scancode_string(button)
+			buttons += button_name + \"/\"
+			
+			remove.set_text(0, button_name)
+			remove.set_text(1, \"Remove\")
+			
+			remove.set_meta(\"function\", \"remove\")
+			remove.set_meta(\"action\", action)
+			remove.set_meta(\"button\", button)
+			
+		
+		buttons = buttons.left(buttons.length() - 1)
+		item.set_text(1, buttons)
+		
+		var add = create_item(item)
+		add.set_meta(\"function\", \"add\")
+		add.set_meta(\"action\", action)
+		add.set_text(1, \"Add\")
+	
+	var item = create_item(root)
+	item.set_text(0, \"Reset to Default\")
+	item.set_meta(\"function\", \"reset\")
+	item.set_expand_right(0, true)
+	item.set_text_align(0, TreeItem.ALIGN_CENTER)
+	
+	item = create_item(root)
+	item.set_text(0, \"Done\")
+	item.set_meta(\"function\", \"done\")
+	item.set_expand_right(0, true)
+	item.set_text_align(0, TreeItem.ALIGN_CENTER)
+	
+	get_root().get_children().select(1)
+	
+
+
+func _gui_input(event):
+	if !event.is_pressed():
+		return
+	var new_selected_item : TreeItem
+	
+	if event.is_action(\"ui_accept\"):
+		if get_selected().collapsed:
+			get_selected().collapsed = false
+			new_selected_item = get_selected().get_children()
+			
+		else:
+			emit_signal(\"item_activated\")
+			
+		
+		accept_event()
+	
+	if event.is_action(\"ui_up\"):
+		new_selected_item = get_selected().get_prev()
+		if !new_selected_item:
+			new_selected_item = get_selected().get_parent()
+		
+		accept_event()
+		
+	if event.is_action(\"ui_down\"):
+		new_selected_item = get_selected().get_next()
+		if !new_selected_item:
+			new_selected_item = get_selected().get_parent()
+		
+		accept_event()
+		
+	
+	if new_selected_item == get_root():
+		return
+	
+	if new_selected_item == get_selected().get_parent():
+		new_selected_item.collapsed = true
+		ensure_cursor_is_visible()
+		
+		if event.is_action(\"ui_down\"):
+			new_selected_item.get_next().select(0)
+		
+	elif new_selected_item:
+		new_selected_item.select(0)
+		ensure_cursor_is_visible()
+		
+"
+
+[sub_resource type="LineShape2D" id=26]
+
+[sub_resource type="StyleBoxFlat" id=27]
+bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
 
 [node name="Control" type="Control"]
 anchor_top = 1.0
@@ -179,75 +373,53 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Main" type="ScrollContainer" parent="."]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -80.0
+margin_left = -100.0
 margin_top = -240.0
-margin_right = 80.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="."]
-visible = false
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -80.0
-margin_top = -256.0
-margin_right = 80.0
-margin_bottom = -242.0
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "Player 1"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Scroll" type="ScrollContainer" parent="."]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -76.0
-margin_top = -236.0
-margin_right = 76.0
-margin_bottom = -4.0
+margin_right = 100.0
+custom_styles/bg = SubResource( 18 )
 scroll_horizontal_enabled = false
-script = SubResource( 2 )
+script = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBox" type="VBoxContainer" parent="Scroll"]
-margin_right = 152.0
-margin_bottom = 98.0
+[node name="VBox" type="VBoxContainer" parent="Main"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 196.0
+margin_bottom = 155.0
 size_flags_horizontal = 3
 custom_constants/separation = 2
-script = SubResource( 3 )
+script = SubResource( 4 )
 
-[node name="Controls" type="Label" parent="Scroll/VBox"]
-margin_right = 152.0
-margin_bottom = 14.0
+[node name="MenuControls" type="Label" parent="Main/VBox"]
+margin_right = 192.0
+margin_bottom = 31.0
+custom_styles/normal = SubResource( 17 )
+text = "Navigate the menus with Arrow keys and Enter"
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="ColorSelection" type="Control" parent="Scroll/VBox"]
-margin_top = 16.0
-margin_right = 152.0
-margin_bottom = 40.0
+[node name="ColorSelection" type="Control" parent="Main/VBox"]
+margin_top = 33.0
+margin_right = 192.0
+margin_bottom = 57.0
 rect_min_size = Vector2( 0, 24 )
 script = ExtResource( 1 )
 wrap_around = true
 display_text = 0
 container = NodePath("HBox")
-bg_stylebox = SubResource( 4 )
-selected_stylebox = SubResource( 5 )
+bg_stylebox = SubResource( 8 )
+selected_stylebox = SubResource( 9 )
 
-[node name="HBox" type="HBoxContainer" parent="Scroll/VBox/ColorSelection"]
+[node name="HBox" type="HBoxContainer" parent="Main/VBox/ColorSelection"]
 anchor_right = 1.0
 margin_left = 4.0
 margin_top = 4.0
@@ -259,20 +431,39 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Weapon1Selection" type="Control" parent="Scroll/VBox"]
-margin_top = 42.0
-margin_right = 152.0
-margin_bottom = 82.0
+[node name="Controls" type="Label" parent="Main/VBox"]
+margin_top = 59.0
+margin_right = 192.0
+margin_bottom = 77.0
+custom_styles/normal = SubResource( 19 )
+
+[node name="ChangeControls" type="Button" parent="Main/VBox"]
+margin_top = 79.0
+margin_right = 192.0
+margin_bottom = 93.0
+custom_styles/pressed = SubResource( 20 )
+custom_styles/normal = SubResource( 21 )
+text = "Change Controls"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weapon1Selection" type="Control" parent="Main/VBox"]
+margin_top = 95.0
+margin_right = 192.0
+margin_bottom = 135.0
 rect_min_size = Vector2( 0, 40 )
 focus_neighbour_top = NodePath("../ReadyButton")
 script = ExtResource( 1 )
 wrap_around = true
-display_text = 0
+display_text = 2
+text_valign = 2
 container = NodePath("HBox")
-bg_stylebox = SubResource( 4 )
-selected_stylebox = SubResource( 5 )
+label = NodePath("Label")
+bg_stylebox = SubResource( 8 )
+selected_stylebox = SubResource( 9 )
 
-[node name="HBox" type="HBoxContainer" parent="Scroll/VBox/Weapon1Selection"]
+[node name="HBox" type="HBoxContainer" parent="Main/VBox/Weapon1Selection"]
 anchor_right = 1.0
 margin_left = 4.0
 margin_top = 4.0
@@ -284,17 +475,122 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ReadyButton" type="Button" parent="Scroll/VBox"]
-margin_top = 84.0
-margin_right = 152.0
-margin_bottom = 98.0
+[node name="Label" type="Label" parent="Main/VBox/Weapon1Selection"]
+visible = false
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -14.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Weapon"
+align = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReadyButton" type="Button" parent="Main/VBox"]
+margin_top = 137.0
+margin_right = 192.0
+margin_bottom = 151.0
 focus_mode = 0
-custom_styles/pressed = SubResource( 6 )
-custom_styles/normal = SubResource( 7 )
+custom_styles/pressed = SubResource( 20 )
+custom_styles/normal = SubResource( 21 )
 text = "Ready"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="value_changed" from="Scroll/VBox/ColorSelection" to="." method="_on_ColorSelection_value_changed"]
-[connection signal="value_changed" from="Scroll/VBox/Weapon1Selection" to="." method="_on_Weapon1Selection_value_changed"]
-[connection signal="pressed" from="Scroll/VBox/ReadyButton" to="." method="_on_ReadyButton_pressed"]
+
+[node name="Settings" type="Panel" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -120.0
+margin_top = -240.0
+margin_right = 120.0
+custom_styles/panel = SubResource( 22 )
+script = SubResource( 23 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tree" type="Tree" parent="Settings"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -116.0
+margin_top = -236.0
+margin_right = 24.0
+margin_bottom = -4.0
+focus_neighbour_bottom = NodePath("../Confirm")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/selected = SubResource( 24 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+columns = 2
+hide_folding = true
+hide_root = true
+select_mode = 1
+script = SubResource( 25 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="Settings"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 28.0
+margin_top = -236.0
+margin_right = 116.0
+margin_bottom = -122.0
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="Settings/ViewportContainer"]
+size = Vector2( 88, 114 )
+own_world = true
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="Player" parent="Settings/ViewportContainer/Viewport" instance=ExtResource( 2 )]
+
+[node name="Camera2D" type="Camera2D" parent="Settings/ViewportContainer/Viewport/Player"]
+current = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Settings/ViewportContainer/Viewport"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Settings/ViewportContainer/Viewport/StaticBody2D"]
+position = Vector2( 0, 64 )
+shape = SubResource( 26 )
+
+[node name="Label" type="Label" parent="Settings"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -60.0
+margin_top = -60.0
+margin_right = 60.0
+margin_bottom = 60.0
+custom_styles/normal = SubResource( 27 )
+text = "Press the button you want to bind to "
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="value_changed" from="Main/VBox/ColorSelection" to="." method="_on_ColorSelection_value_changed"]
+[connection signal="pressed" from="Main/VBox/ChangeControls" to="." method="_on_ChangeControls_pressed"]
+[connection signal="value_changed" from="Main/VBox/Weapon1Selection" to="." method="_on_Weapon1Selection_value_changed"]
+[connection signal="pressed" from="Main/VBox/ReadyButton" to="." method="_on_ReadyButton_pressed"]
+[connection signal="done" from="Settings" to="." method="_on_Settings_done"]
