@@ -3,7 +3,7 @@ class_name PlayerEntity
 
 export(Vector2) var spawn_point
 
-var controller : Globals.Player = null
+var controller : PlayerController = null
 
 ### set by Globals ###
 

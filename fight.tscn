@@ -22,7 +22,7 @@ func _ready():
 		load_stage(load(\"res://stages/plain/plain.tscn\"))
 	
 
-func add_player(controller: Globals.Player): # called by a parent
+func add_player(controller: PlayerController): # called by a parent
 	var node = load(\"res://weapon_masters/player/player.tscn\").instance()
 	
 	node.controller = controller

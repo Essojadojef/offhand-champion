@@ -8,7 +8,7 @@ script/source = "extends Control
 
 signal player_ready()
 
-var controller : Globals.Player
+var controller : PlayerController
 
 
 func grab_controller_focus():

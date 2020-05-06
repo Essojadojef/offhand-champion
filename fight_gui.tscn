@@ -17,7 +17,7 @@ func _on_player_added(controller):
 	$PlayerPanels.add_child(setup_panel)
 	setup_panel.grab_controller_focus()
 
-func _on_player_ready(controller: Globals.Player, setup_panel: Control):
+func _on_player_ready(controller: PlayerController, setup_panel: Control):
 	
 	# remove setup_panel
 	$PlayerPanels.remove_child(setup_panel)
