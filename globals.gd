@@ -215,6 +215,43 @@ class Player extends Node2D:
 				"item": false,
 				"throw": false})
 	
+	func get_button_name(value: int) -> String:
+		if keyboard:
+			return OS.get_scancode_string(value)
+		
+		match value:
+			JOY_XBOX_B: return "B"
+			JOY_XBOX_A: return "A"
+			JOY_XBOX_X: return "X"
+			JOY_XBOX_Y: return "Y"
+			JOY_L: return "LB"
+			JOY_L2: return "LT"
+			JOY_L3: return "Left Stick"
+			JOY_R: return "RB"
+			JOY_R2: return "RT"
+			JOY_R3: return "Right Stick"
+			_ : return "?"
+	
+	func list_buttons(action: String):
+		if button_settings[action].empty():
+			return "None"
+		
+		var text = ""
+		for i in button_settings[action]:
+			text += get_button_name(i) + "/"
+		
+		return text.left(text.length() - 1)
+	
+	func get_stick_axis_name(axis: int) -> String:
+		match axis:
+			JOY_ANALOG_LX: return "Left Stick L/R"
+			JOY_ANALOG_LY: return "Left Stick U/D"
+			JOY_ANALOG_RX: return "Right Stick L/R"
+			JOY_ANALOG_RY: return "Right Stick U/D"
+			JOY_ANALOG_L2: return "Left Trigger"
+			JOY_ANALOG_R2: return "Right Trigger"
+			_ : return "?"
+	
 	
 	
 	func is_event_allowed(event: InputEvent) -> bool:
