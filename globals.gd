@@ -340,9 +340,9 @@ class Player extends Node2D:
 	func gui_input(event: InputEvent):
 		if focus.has_method("_gui_input"):
 			focus._gui_input(event)
-			
-			if get_tree().is_input_handled() or !event.is_pressed():
-				return
+		
+		if get_tree().is_input_handled() or !event.is_pressed():
+			return
 		
 		var next_focus
 		
