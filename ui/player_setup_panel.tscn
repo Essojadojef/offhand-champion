@@ -1,7 +1,9 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://ui/h_selector.gd" type="Script" id=1]
 [ext_resource path="res://weapon_masters/player/player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://weapon_masters/stages/sprite_rect.gd" type="Script" id=3]
+[ext_resource path="res://ui/controls_preview_ground_2.png" type="Texture" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -19,7 +21,7 @@ func _on_ColorSelection_value_changed(value):
 	controller.color = Globals.colors[value]
 
 func _on_Weapon1Selection_value_changed(value):
-	var container = $Main/Scroll/VBox/Weapon1Selection/HBox
+	var container = $Main/VBox/Weapon1Selection/HBox
 	var id = container.get_child(value).get_meta(\"id\")
 	controller.match_settings.weapon1 = id
 
@@ -45,17 +47,15 @@ func show_main():
 	$Settings.hide()
 	
 	controller.focus = $Main/VBox.get_child(0)
-	controller.emit_signal(\"focus_changed\")
 
 func show_settings():
 	$Main.hide()
 	$Settings.show()
 	
 	controller.focus = $Settings/Tree
-	controller.emit_signal(\"focus_changed\")
 "
 
-[sub_resource type="StyleBoxFlat" id=18]
+[sub_resource type="StyleBoxFlat" id=2]
 content_margin_left = 4.0
 content_margin_right = 4.0
 content_margin_top = 4.0
@@ -151,8 +151,27 @@ func _ready():
 	
 "
 
-[sub_resource type="StyleBoxFlat" id=17]
+[sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
+
+[sub_resource type="StyleBoxFlat" id=17]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+expand_margin_left = 2.0
+expand_margin_right = 2.0
+expand_margin_top = 2.0
+expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxFlat" id=8]
 content_margin_left = 2.0
@@ -164,23 +183,13 @@ bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
 [sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0.6, 0.6, 0.6, 0.501961 )
 
-[sub_resource type="StyleBoxFlat" id=19]
-content_margin_left = 2.0
-content_margin_right = 2.0
-content_margin_top = 2.0
-content_margin_bottom = 2.0
-bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
-
-[sub_resource type="StyleBoxFlat" id=20]
-bg_color = Color( 0.6, 0.6, 0.6, 0.501961 )
-
-[sub_resource type="StyleBoxFlat" id=21]
+[sub_resource type="StyleBoxFlat" id=10]
 bg_color = Color( 0.6, 0.6, 0.6, 0.25098 )
 
-[sub_resource type="StyleBoxFlat" id=22]
+[sub_resource type="StyleBoxFlat" id=11]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
 
-[sub_resource type="GDScript" id=23]
+[sub_resource type="GDScript" id=12]
 script/source = "extends Control
 
 var controller
@@ -209,9 +218,12 @@ func _on_item_activated():
 			
 		\"add\":
 			bind_input(selected_item.get_meta(\"action\"))
+			$Tree.list_settings()
 			
 		\"reset\":
-			pass
+			controller.reset_controls_settings()
+			$Tree.list_settings()
+			
 		\"done\":
 			emit_signal(\"done\")
 	
@@ -225,11 +237,11 @@ func bind_input(action):
 	grab_focus()
 	
 	while true:
-		var input_event = yield(self, \"gui_input\")
+		var input_event : InputEvent = yield(self, \"gui_input\")
 		
 		print(input_event)
 		
-		if !input_event.pressed or input_event.echo:
+		if !input_event.is_pressed() or input_event.is_echo():
 			continue
 		
 		if controller.keyboard and input_event is InputEventKey:
@@ -252,10 +264,10 @@ func bind_input(action):
 	
 "
 
-[sub_resource type="StyleBoxFlat" id=24]
+[sub_resource type="StyleBoxFlat" id=13]
 bg_color = Color( 0.380392, 0.380392, 0.392157, 1 )
 
-[sub_resource type="GDScript" id=25]
+[sub_resource type="GDScript" id=14]
 script/source = "extends Tree
 
 func _ready():
@@ -276,7 +288,7 @@ func list_settings():
 		
 		for button in controller.button_settings[action]:
 			var remove = create_item(item)
-			var button_name = OS.get_scancode_string(button)
+			var button_name = controller.get_button_name(button)
 			buttons += button_name + \"/\"
 			
 			remove.set_text(0, button_name)
@@ -358,10 +370,39 @@ func _gui_input(event):
 		
 "
 
-[sub_resource type="LineShape2D" id=26]
+[sub_resource type="LineShape2D" id=15]
 
-[sub_resource type="StyleBoxFlat" id=27]
+[sub_resource type="StyleBoxFlat" id=16]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends Control
+
+onready var controller = get_parent().controller
+
+func _physics_process(_delta):
+	if is_visible_in_tree():
+		update()
+
+func _draw():
+	
+	draw_texture(preload(\"res://ui/directional_input.png\"), Vector2(), Color(1, 1, 1, .25))
+	
+	var src : Rect2
+	match controller.get_current_input().direction:
+		Vector2(-1, -1): src = Rect2(5, 5, 6, 6)
+		Vector2( 0, -1): src = Rect2(12, 0, 8, 8)
+		Vector2( 1, -1): src = Rect2(21, 5, 6, 6)
+		Vector2(-1,  0): src = Rect2(0, 12, 8, 8)
+		Vector2( 0,  0): src = Rect2(12, 12, 8, 8)
+		Vector2( 1,  0): src = Rect2(24, 12, 8, 8)
+		Vector2(-1,  1): src = Rect2(5, 21, 6, 6)
+		Vector2( 0,  1): src = Rect2(12, 24, 8, 8)
+		Vector2( 1,  1): src = Rect2(21, 21, 6, 6)
+	
+	draw_texture_rect_region(preload(\"res://ui/directional_input.png\"), src, src)
+	
+"
 
 [node name="Control" type="Control"]
 anchor_top = 1.0
@@ -381,7 +422,7 @@ anchor_bottom = 1.0
 margin_left = -100.0
 margin_top = -240.0
 margin_right = 100.0
-custom_styles/bg = SubResource( 18 )
+custom_styles/bg = SubResource( 2 )
 scroll_horizontal_enabled = false
 script = SubResource( 3 )
 __meta__ = {
@@ -400,7 +441,7 @@ script = SubResource( 4 )
 [node name="MenuControls" type="Label" parent="Main/VBox"]
 margin_right = 192.0
 margin_bottom = 31.0
-custom_styles/normal = SubResource( 17 )
+custom_styles/normal = SubResource( 5 )
 text = "Navigate the menus with Arrow keys and Enter"
 autowrap = true
 __meta__ = {
@@ -416,8 +457,8 @@ script = ExtResource( 1 )
 wrap_around = true
 display_text = 0
 container = NodePath("HBox")
-bg_stylebox = SubResource( 8 )
-selected_stylebox = SubResource( 9 )
+bg_stylebox = SubResource( 6 )
+selected_stylebox = SubResource( 17 )
 
 [node name="HBox" type="HBoxContainer" parent="Main/VBox/ColorSelection"]
 anchor_right = 1.0
@@ -435,14 +476,14 @@ __meta__ = {
 margin_top = 59.0
 margin_right = 192.0
 margin_bottom = 77.0
-custom_styles/normal = SubResource( 19 )
+custom_styles/normal = SubResource( 8 )
 
 [node name="ChangeControls" type="Button" parent="Main/VBox"]
 margin_top = 79.0
 margin_right = 192.0
 margin_bottom = 93.0
-custom_styles/pressed = SubResource( 20 )
-custom_styles/normal = SubResource( 21 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Change Controls"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -460,8 +501,8 @@ display_text = 2
 text_valign = 2
 container = NodePath("HBox")
 label = NodePath("Label")
-bg_stylebox = SubResource( 8 )
-selected_stylebox = SubResource( 9 )
+bg_stylebox = SubResource( 6 )
+selected_stylebox = SubResource( 17 )
 
 [node name="HBox" type="HBoxContainer" parent="Main/VBox/Weapon1Selection"]
 anchor_right = 1.0
@@ -495,60 +536,55 @@ margin_top = 137.0
 margin_right = 192.0
 margin_bottom = 151.0
 focus_mode = 0
-custom_styles/pressed = SubResource( 20 )
-custom_styles/normal = SubResource( 21 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Ready"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Settings" type="Panel" parent="."]
-visible = false
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -120.0
+margin_left = -140.0
 margin_top = -240.0
-margin_right = 120.0
-custom_styles/panel = SubResource( 22 )
-script = SubResource( 23 )
+margin_right = 140.0
+custom_styles/panel = SubResource( 11 )
+script = SubResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Tree" type="Tree" parent="Settings"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -116.0
-margin_top = -236.0
-margin_right = 24.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -96.0
 margin_bottom = -4.0
 focus_neighbour_bottom = NodePath("../Confirm")
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/selected = SubResource( 24 )
+custom_styles/selected = SubResource( 13 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 columns = 2
 hide_folding = true
 hide_root = true
 select_mode = 1
-script = SubResource( 25 )
+script = SubResource( 14 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ViewportContainer" type="ViewportContainer" parent="Settings"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = 28.0
-margin_top = -236.0
-margin_right = 116.0
-margin_bottom = -122.0
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -92.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = 118.0
 stretch = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -558,7 +594,7 @@ __meta__ = {
 size = Vector2( 88, 114 )
 own_world = true
 handle_input_locally = false
-render_target_update_mode = 0
+render_target_update_mode = 3
 
 [node name="Player" parent="Settings/ViewportContainer/Viewport" instance=ExtResource( 2 )]
 
@@ -566,10 +602,16 @@ render_target_update_mode = 0
 current = true
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Settings/ViewportContainer/Viewport"]
+position = Vector2( 0, 64 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Settings/ViewportContainer/Viewport/StaticBody2D"]
-position = Vector2( 0, 64 )
-shape = SubResource( 26 )
+shape = SubResource( 15 )
+
+[node name="SpriteRect" type="Node2D" parent="Settings/ViewportContainer/Viewport/StaticBody2D"]
+scale = Vector2( 2, 2 )
+script = ExtResource( 3 )
+texture = ExtResource( 4 )
+rect = Rect2( -1024, 0, 2048, 32 )
 
 [node name="Label" type="Label" parent="Settings"]
 visible = false
@@ -581,7 +623,7 @@ margin_left = -60.0
 margin_top = -60.0
 margin_right = 60.0
 margin_bottom = 60.0
-custom_styles/normal = SubResource( 27 )
+custom_styles/normal = SubResource( 16 )
 text = "Press the button you want to bind to "
 align = 1
 valign = 1
@@ -589,6 +631,15 @@ autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="DirectionalInput" type="Control" parent="Settings"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -92.0
+margin_top = 122.0
+margin_right = -60.0
+margin_bottom = 154.0
+script = SubResource( 18 )
 [connection signal="value_changed" from="Main/VBox/ColorSelection" to="." method="_on_ColorSelection_value_changed"]
 [connection signal="pressed" from="Main/VBox/ChangeControls" to="." method="_on_ChangeControls_pressed"]
 [connection signal="value_changed" from="Main/VBox/Weapon1Selection" to="." method="_on_Weapon1Selection_value_changed"]
