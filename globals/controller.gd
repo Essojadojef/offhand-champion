@@ -9,7 +9,8 @@ var keyboard = false
 var color : Color
 signal color_changed(color)
 
-var focus : Node # is Control while in menus, is KinematicBody2D while playing
+var focus : Node setget set_focus
+# is Control while in menus, is KinematicBody2D while playing
 signal focus_changed(new_focus)
 
 var stick_settings = {}
@@ -29,15 +30,25 @@ var input_frames = 0
 
 var current_input = {} # inputs state delayed by input_buffer_frames
 
+
+func set_focus(value: Node):
+	focus = value
+	emit_signal("focus_changed", value)
+
 func _init(_device: int):
 	process_priority = -1 # callbacks are executed first in this node
 	set_physics_process(false) # _physics_process will be activated when a game starts
+	
+	z_index = 10
 	
 	device = _device
 	keyboard = device == -1
 	color = Globals.get_available_color()
 	
-	# set dafault controls
+	reset_controls_settings()
+	clear_input_buffer()
+
+func reset_controls_settings():
 	stick_settings = {
 			"stick_x": JOY_ANALOG_LX,
 			"stick_y": JOY_ANALOG_LY,
@@ -76,11 +87,6 @@ func _init(_device: int):
 			"guard": [JOY_R],
 			"throw": [JOY_R2]
 		}
-	
-	z_index = 10
-	name = str(device)
-	
-	clear_input_buffer()
 
 func clear_input_buffer():
 	for i in input_buffer_frames:
