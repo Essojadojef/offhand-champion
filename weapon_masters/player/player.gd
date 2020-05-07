@@ -336,7 +336,7 @@ func dodge():
 		return
 	dodge_time = dodge_iframes + dodge_recovery
 	dodge_direction = directional_input.normalized()
-	$AnimationPlayer.play("Dodge Forward" if dodge_direction.x > 0 else "Dodge Back")
+	$AnimationPlayer.play("dodge_forward" if h_tilt > 0 else "dodge_back")
 
 func process_aim(delta: float):
 	
