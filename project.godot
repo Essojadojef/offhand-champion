@@ -12,12 +12,12 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Entity",
 "language": "GDScript",
-"path": "res://weapon_masters/entity.gd"
+"path": "res://globals/entity.gd"
 }, {
 "base": "Camera2D",
 "class": "GameplayCamera",
 "language": "GDScript",
-"path": "res://weapon_masters/gameplay_camera.gd"
+"path": "res://globals/gameplay_camera.gd"
 }, {
 "base": "Control",
 "class": "HSelection",
@@ -27,7 +27,7 @@ _global_script_classes=[ {
 "base": "Area2D",
 "class": "Hitbox",
 "language": "GDScript",
-"path": "res://weapon_masters/hitbox.gd"
+"path": "res://globals/hitbox.gd"
 }, {
 "base": "Node2D",
 "class": "PlayerController",
@@ -47,18 +47,18 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Weapon",
 "language": "GDScript",
-"path": "res://weapon_masters/weapon.gd"
+"path": "res://globals/weapon.gd"
 }, {
 "base": "Resource",
 "class": "WeaponResource",
 "language": "GDScript",
-"path": "res://weapon_masters/weapon_resource.gd"
+"path": "res://globals/weapon_resource.gd"
 } ]
 _global_script_class_icons={
 "Entity": "",
 "GameplayCamera": "",
 "HSelection": "",
-"Hitbox": "res://weapon_masters/hitbox.png",
+"Hitbox": "res://globals/hitbox.png",
 "PlayerController": "",
 "PlayerEntity": "",
 "SpriteRect": "",

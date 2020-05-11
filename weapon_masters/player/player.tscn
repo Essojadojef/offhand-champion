@@ -6,7 +6,9 @@
 [ext_resource path="res://weapon_masters/player/aim.png" type="Texture" id=4]
 [ext_resource path="res://weapon_masters/player/death.wav" type="AudioStream" id=5]
 [ext_resource path="res://ui/arrows.png" type="Texture" id=7]
-[ext_resource path="res://skeleton/character_skeleton.tscn" type="PackedScene" id=8]
+[ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=8]
+
+
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 16, 48 )

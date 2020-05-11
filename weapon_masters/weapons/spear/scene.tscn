@@ -1,6 +1,6 @@
 [gd_scene load_steps=23 format=2]
 
-[ext_resource path="res://weapon_masters/hitbox.gd" type="Script" id=1]
+[ext_resource path="res://globals/hitbox.gd" type="Script" id=1]
 [ext_resource path="res://weapon_masters/weapons/spear/sprite.png" type="Texture" id=2]
 [ext_resource path="res://weapon_masters/weapons/spear/spear_attack.png" type="Texture" id=3]
 [ext_resource path="res://weapon_masters/weapons/spear/rotation_attack.png" type="Texture" id=4]
@@ -8,7 +8,10 @@
 [ext_resource path="res://weapon_masters/weapons/spear/attack_quick.wav" type="AudioStream" id=7]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_rotation.wav" type="AudioStream" id=8]
 [ext_resource path="res://weapon_masters/weapons/spear/attack_launch.wav" type="AudioStream" id=9]
-[ext_resource path="res://skeleton/character_skeleton.tscn" type="PackedScene" id=10]
+[ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=10]
+
+
+
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon

@@ -1,8 +1,9 @@
 [gd_resource type="Resource" load_steps=4 format=2]
 
-[ext_resource path="res://weapon_masters/weapon_resource.gd" type="Script" id=1]
+[ext_resource path="res://globals/weapon_resource.gd" type="Script" id=1]
 [ext_resource path="res://weapon_masters/weapons/sword/icon.png" type="Texture" id=2]
 [ext_resource path="res://weapon_masters/weapons/sword/scene.tscn" type="PackedScene" id=3]
+
 
 [resource]
 script = ExtResource( 1 )

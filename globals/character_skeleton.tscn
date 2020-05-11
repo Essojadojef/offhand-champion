@@ -1,6 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://skeleton/character_skeleton.gd" type="Script" id=2]
+[ext_resource path="res://globals/character_skeleton.gd" type="Script" id=2]
+
+
 
 [node name="Skeleton" type="Node2D"]
 z_index = -1
