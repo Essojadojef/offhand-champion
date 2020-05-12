@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/aim.png-65a3bef5213eec3d5233faacee5e98ae.stex"
+path="res://.import/aim.png-3897eb611329a7236e105ef25e9e3b47.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/player/aim.png"
-dest_files=[ "res://.import/aim.png-65a3bef5213eec3d5233faacee5e98ae.stex" ]
+source_file="res://player/aim.png"
+dest_files=[ "res://.import/aim.png-3897eb611329a7236e105ef25e9e3b47.stex" ]
 
 [params]
 

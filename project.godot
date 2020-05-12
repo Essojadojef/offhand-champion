@@ -37,7 +37,7 @@ _global_script_classes=[ {
 "base": "Entity",
 "class": "PlayerEntity",
 "language": "GDScript",
-"path": "res://weapon_masters/player/player.gd"
+"path": "res://player/player.gd"
 }, {
 "base": "Node2D",
 "class": "SpriteRect",

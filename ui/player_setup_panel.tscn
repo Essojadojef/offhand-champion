@@ -1,9 +1,10 @@
 [gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://ui/h_selector.gd" type="Script" id=1]
-[ext_resource path="res://weapon_masters/player/player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://player/player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://weapon_masters/stages/sprite_rect.gd" type="Script" id=3]
 [ext_resource path="res://ui/controls_preview_ground_2.png" type="Texture" id=4]
+
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control

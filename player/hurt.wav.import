@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/hurt.wav-de012a9535ba51f80c86ae9918f2b140.sample"
+path="res://.import/hurt.wav-f7645b9731c053d66aaeb8e0f288a157.sample"
 
 [deps]
 
-source_file="res://weapon_masters/player/hurt.wav"
-dest_files=[ "res://.import/hurt.wav-de012a9535ba51f80c86ae9918f2b140.sample" ]
+source_file="res://player/hurt.wav"
+dest_files=[ "res://.import/hurt.wav-f7645b9731c053d66aaeb8e0f288a157.sample" ]
 
 [params]
 

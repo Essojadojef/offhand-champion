@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/death.wav-505df8a56700b5d261987bb173a2f5ea.sample"
+path="res://.import/death.wav-89226949b1a4a7a15e3dfd940c4540b9.sample"
 
 [deps]
 
-source_file="res://weapon_masters/player/death.wav"
-dest_files=[ "res://.import/death.wav-505df8a56700b5d261987bb173a2f5ea.sample" ]
+source_file="res://player/death.wav"
+dest_files=[ "res://.import/death.wav-89226949b1a4a7a15e3dfd940c4540b9.sample" ]
 
 [params]
 
