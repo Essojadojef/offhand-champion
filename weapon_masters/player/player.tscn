@@ -1,14 +1,13 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://weapon_masters/player/player.gd" type="Script" id=1]
 [ext_resource path="res://weapon_masters/player/face.png" type="Texture" id=2]
 [ext_resource path="res://weapon_masters/player/hurt.wav" type="AudioStream" id=3]
 [ext_resource path="res://weapon_masters/player/aim.png" type="Texture" id=4]
 [ext_resource path="res://weapon_masters/player/death.wav" type="AudioStream" id=5]
+[ext_resource path="res://ui/meter.png" type="Texture" id=6]
 [ext_resource path="res://ui/arrows.png" type="Texture" id=7]
 [ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=8]
-
-
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 16, 48 )
@@ -386,7 +385,7 @@ tracks/14/keys = {
 "values": [ 0.0, 0.0 ]
 }
 
-[sub_resource type="Animation" id=21]
+[sub_resource type="Animation" id=5]
 resource_name = "jump"
 length = 0.0166667
 step = 0.0166667
@@ -571,7 +570,7 @@ tracks/14/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=6]
 resource_name = "jumpsquat"
 length = 0.0333334
 step = 0.0166667
@@ -756,8 +755,7 @@ tracks/14/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=6]
-resource_name = "run"
+[sub_resource type="Animation" id=7]
 length = 0.0166667
 step = 0.0166667
 tracks/0/type = "value"
@@ -1470,6 +1468,18 @@ func _set(property, value):
 		position_update = true
 		"
 
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 8, 64, 8 )
+
+[sub_resource type="AtlasTexture" id=21]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 24, 64, 8 )
+
+[sub_resource type="AtlasTexture" id=22]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 16, 64, 8 )
+
 [node name="Player" type="KinematicBody2D" groups=[
 "players",
 ]]
@@ -1519,9 +1529,9 @@ autoplay = "stand"
 playback_process_mode = 0
 anims/dodge_back = SubResource( 3 )
 anims/dodge_forward = SubResource( 4 )
-anims/jump = SubResource( 21 )
-anims/jumpsquat = SubResource( 7 )
-anims/run = SubResource( 6 )
+anims/jump = SubResource( 5 )
+anims/jumpsquat = SubResource( 6 )
+anims/run = SubResource( 7 )
 anims/stand = SubResource( 8 )
 anims/turn = SubResource( 9 )
 anims/walk = SubResource( 10 )
@@ -1591,6 +1601,24 @@ texture = ExtResource( 4 )
 
 [node name="CastPoint" type="Position2D" parent="Weapons"]
 script = SubResource( 20 )
+
+[node name="TextureProgress" type="TextureProgress" parent="."]
+visible = false
+margin_left = -32.0
+margin_top = -64.0
+margin_right = 32.0
+margin_bottom = -56.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+texture_under = SubResource( 23 )
+texture_over = SubResource( 21 )
+texture_progress = SubResource( 22 )
+fill_mode = 6
+tint_over = Color( 1, 1, 1, 0.501961 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="body_entered" from="PickupArea" to="." method="_on_PickupArea_body_entered"]
 [connection signal="body_exited" from="PickupArea" to="." method="_on_PickupArea_body_exited"]
 
