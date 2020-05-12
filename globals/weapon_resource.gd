@@ -1,5 +1,5 @@
 extends Resource
-class_name WeaponResource
+class_name WeaponResource, "weapon_resource.png"
 
 enum Level {
 	UNCATEGORIZED,

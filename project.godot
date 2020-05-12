@@ -62,8 +62,8 @@ _global_script_class_icons={
 "PlayerController": "",
 "PlayerEntity": "",
 "SpriteRect": "",
-"Weapon": "",
-"WeaponResource": ""
+"Weapon": "res://globals/weapon.png",
+"WeaponResource": "res://globals/weapon_resource.png"
 }
 
 [application]

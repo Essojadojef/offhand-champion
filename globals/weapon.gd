@@ -1,5 +1,5 @@
 tool extends Node2D
-class_name Weapon
+class_name Weapon, "weapon.png"
 
 var user
 
