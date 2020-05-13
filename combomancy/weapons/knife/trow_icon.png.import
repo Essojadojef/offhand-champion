@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/heavy_icon.png-e2f3819fdd4ef41dac96c33126a12f80.stex"
+path="res://.import/trow_icon.png-102eacfe035dd123dae8607af420a912.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/weapons/knife/heavy_icon.png"
-dest_files=[ "res://.import/heavy_icon.png-e2f3819fdd4ef41dac96c33126a12f80.stex" ]
+source_file="res://combomancy/weapons/knife/trow_icon.png"
+dest_files=[ "res://.import/trow_icon.png-102eacfe035dd123dae8607af420a912.stex" ]
 
 [params]
 
