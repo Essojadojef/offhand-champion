@@ -51,7 +51,7 @@ func rollback(frames: int):
 func add_weapon(id: String) -> Node:
 	assert(!weapon_nodes.has(id))
 	
-	var weapon = Globals.get_weapon(id).scene.instance()
+	var weapon = Globals.get_weapon(id).entity_scene.instance()
 	weapon_nodes[id] = weapon
 	
 	weapon.user = self

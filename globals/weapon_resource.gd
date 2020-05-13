@@ -11,5 +11,7 @@ enum Level {
 export(Level) var level : int = Level.USEFUL
 
 export var icon : Texture
-export var scene : PackedScene
+export var entity_scene : PackedScene # added to the player entity when the weapon is equipped
+export var panel_scene : PackedScene # added to the player panel when the weapon is equipped
+export var item_scene : PackedScene # the weapon when it's an item
 
