@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/combo_spin.png-4db677fad72acd624602ebffecc65cb5.stex"
+path="res://.import/combo_rotation.png-86193fc9345d6ef86338834fd3922a6b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/weapons/sword/combo_spin.png"
-dest_files=[ "res://.import/combo_spin.png-4db677fad72acd624602ebffecc65cb5.stex" ]
+source_file="res://combomancy/weapons/sword/combo_rotation.png"
+dest_files=[ "res://.import/combo_rotation.png-86193fc9345d6ef86338834fd3922a6b.stex" ]
 
 [params]
 

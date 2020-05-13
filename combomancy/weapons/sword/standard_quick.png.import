@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/standard_quick.png-e8a325ccc50722fc5175a8988bc65ccb.stex"
+path="res://.import/standard_quick.png-f0e82ed91e4c426378c8b6205b81d948.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/weapons/sword/standard_quick.png"
-dest_files=[ "res://.import/standard_quick.png-e8a325ccc50722fc5175a8988bc65ccb.stex" ]
+source_file="res://combomancy/weapons/sword/standard_quick.png"
+dest_files=[ "res://.import/standard_quick.png-f0e82ed91e4c426378c8b6205b81d948.stex" ]
 
 [params]
 
