@@ -1,0 +1,566 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://globals/hitbox.gd" type="Script" id=1]
+[ext_resource path="res://vanilla/weapons/spear/sprite.png" type="Texture" id=2]
+[ext_resource path="res://vanilla/weapons/spear/spear_attack.png" type="Texture" id=3]
+[ext_resource path="res://vanilla/weapons/spear/rotation_attack.png" type="Texture" id=4]
+[ext_resource path="res://vanilla/weapons/spear/attack_heavy.wav" type="AudioStream" id=6]
+[ext_resource path="res://vanilla/weapons/spear/attack_quick.wav" type="AudioStream" id=7]
+[ext_resource path="res://vanilla/weapons/spear/attack_rotation.wav" type="AudioStream" id=8]
+[ext_resource path="res://vanilla/weapons/spear/attack_launch.wav" type="AudioStream" id=9]
+[ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=10]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Weapon
+
+var release_launch = false
+
+func _ready() -> void:
+	$Heavy.hide()
+	$Spear.hide()
+	$Sprite.hide()
+
+func get_attack() -> String:
+	if !user.on_ground:
+		if user.v_tilt == -1:
+			return \"glide\"
+	
+	if user.heavy :
+		if user.v_tilt == 0:
+			return \"launch\"
+	
+	return \"stab_\" + (
+		\"u\" if user.v_tilt == -1 else \"d\" if user.v_tilt == 1 else \"\") + (
+		\"f\" if user.h_tilt != 0 else \"\")
+
+func attack(attack_name: String):
+	match attack_name:
+		\"stab_u\":
+			rotation = -PI/2
+			$AnimationPlayer.play(\"stab\")
+			
+		\"stab_uf\":
+			rotation = -PI/4
+			$AnimationPlayer.play(\"stab\")
+			
+		\"stab_\", \"stab_f\":
+			rotation = 0
+			$AnimationPlayer.play(\"stab\")
+			
+		\"stab_df\":
+			rotation = PI/4
+			$AnimationPlayer.play(\"stab\")
+			
+		\"stab_d\":
+			rotation = PI/2
+			$AnimationPlayer.play(\"stab\")
+			
+		
+		\"launch\":
+			user.aiming = true
+			$AnimationPlayer.play(\"launch_charge\")
+			
+		\"glide\":
+			$AnimationPlayer.play(attack_name)
+			user.velocity.y -= 400
+			
+		_:
+			$AnimationPlayer.play(attack_name)
+			
+	
+	
+
+
+func input_released():
+	if $AnimationPlayer.current_animation == \"launch_hold\":
+		launch()
+		user.aiming = false
+		
+	elif $AnimationPlayer.current_animation == \"launch_charge\":
+		release_launch = true
+		
+
+func _on_animation_finished(anim_name: String):
+	
+	if anim_name == \"launch_charge\":
+		if release_launch:
+			release_launch = false
+			user.aiming = false
+			launch()
+			
+		else:
+			$AnimationPlayer.play(\"launch_hold\")
+			return
+			
+	
+	emit_signal(\"attack_finished\")
+	
+
+func launch():
+	var node = preload(\"res://vanilla/weapons/spear/projectile.tscn\").instance()
+	var initial_position = $Sprite.global_position
+	user.spawn_projectile(node, initial_position, global_transform.x * 1000)
+	$Sprite.hide()
+	$LaunchSfx.play()
+	emit_signal(\"attack_finished\")
+
+"
+
+[sub_resource type="AudioStreamRandomPitch" id=2]
+audio_stream = ExtResource( 6 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 16, 10 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 32, 16 )
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 9.0
+
+[sub_resource type="CircleShape2D" id=6]
+radius = 32.0
+
+[sub_resource type="AudioStreamRandomPitch" id=7]
+audio_stream = ExtResource( 7 )
+random_pitch = 1.2
+
+[sub_resource type="Animation" id=8]
+length = 0.800002
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Glide/Sprite:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.166667, 0.333333, 0.5, 0.666667 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 180.0, 360.0, 540.0, 720.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Glide:active")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/keys = {
+"times": PoolRealArray( 0.0666667, 0.6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Glide:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.666667 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Glide/RotationAudio:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.133333, 0.266667, 0.4, 0.533333 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ true, true, true, true, true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Glide:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.0666667, 0.6, 0.666667 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=9]
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 0.5, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -16, -16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=10]
+resource_name = "launch_hold"
+length = 0.166667
+loop = true
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( -16, -16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.2
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("CastPoint:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 22, -18 ), Vector2( 32, 0 ), Vector2( 22, 18 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Spear/Quick:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=12]
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Spear/Rotation:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 180.0, 360.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Spear/Rotation:active")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Spear/Rotation:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CastPoint:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -32 ), Vector2( 32, 0 ), Vector2( 0, 32 ), Vector2( -32, 0 ), Vector2( 0, -32 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Glide/RotationAudio:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, true ]
+}
+
+[sub_resource type="Animation" id=13]
+resource_name = "stab"
+length = 0.516668
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Heavy:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.2, 0.333333 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 42, 0 ), Vector2( 76, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Heavy:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Heavy:active")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.2, 0.333333 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sfx1:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.2 ),
+"transitions": PoolRealArray( 1 ),
+"update": 2,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Sprite:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.516667 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.05, 0.2, 0.333333, 0.516667 ),
+"transitions": PoolRealArray( 2, 2, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 16, 0 ), Vector2( -8, 0 ), Vector2( 8, 0 ), Vector2( 42, 0 ), Vector2( 45, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprite:rotation_degrees")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 45.0 ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Heavy:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.2, 0.333333 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+
+[node name="Spear" type="Node2D"]
+z_index = 16
+script = SubResource( 1 )
+
+[node name="Sfx1" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource( 2 )
+attenuation = 0.5
+
+[node name="Heavy" type="Area2D" parent="."]
+visible = false
+position = Vector2( 76, 0 )
+scale = Vector2( 0.599999, 0.5 )
+z_index = 1
+collision_layer = 0
+script = ExtResource( 1 )
+launch_distance = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Heavy"]
+shape = SubResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="Heavy"]
+visible = false
+texture = ExtResource( 3 )
+
+[node name="Glide" type="Area2D" parent="."]
+modulate = Color( 1, 1, 1, 0.500001 )
+position = Vector2( 0, -64 )
+rotation = 4.46638e-06
+scale = Vector2( 2, 1 )
+collision_layer = 0
+script = ExtResource( 1 )
+launch_angle = -45.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Glide"]
+shape = SubResource( 4 )
+
+[node name="Sprite" type="Sprite" parent="Glide"]
+rotation = 0.628318
+z_index = 16
+z_as_relative = false
+texture = ExtResource( 4 )
+hframes = 6
+frame = 3
+
+[node name="Sprite2" type="Sprite" parent="Glide/Sprite"]
+z_index = 16
+z_as_relative = false
+texture = ExtResource( 4 )
+hframes = 6
+
+[node name="Sprite3" type="Sprite" parent="Glide/Sprite"]
+rotation = 1.5708
+z_index = 16
+z_as_relative = false
+texture = ExtResource( 4 )
+hframes = 6
+
+[node name="RotationAudio" type="AudioStreamPlayer2D" parent="Glide"]
+position = Vector2( 9.34601e-05, 48 )
+rotation = -8.93276e-06
+scale = Vector2( 1, 2 )
+stream = ExtResource( 8 )
+volume_db = -9.0
+pitch_scale = 0.9
+attenuation = 0.5
+
+[node name="LaunchSfx" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 9 )
+attenuation = 0.5
+
+[node name="Spear" type="Node2D" parent="."]
+
+[node name="Launch" type="Area2D" parent="Spear"]
+position = Vector2( 40, 0 )
+scale = Vector2( 0.5, 0.5 )
+collision_layer = 0
+script = ExtResource( 1 )
+launch_distance = 10.0
+
+[node name="Sprite" type="Sprite" parent="Spear/Launch"]
+scale = Vector2( 1e-05, 1 )
+z_index = 16
+z_as_relative = false
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/Launch"]
+shape = SubResource( 5 )
+
+[node name="Rotation" type="Area2D" parent="Spear"]
+visible = false
+rotation = 6.28319
+collision_layer = 0
+script = ExtResource( 1 )
+launch_distance = 2.0
+
+[node name="Sprite" type="Sprite" parent="Spear/Rotation"]
+z_index = 16
+z_as_relative = false
+texture = ExtResource( 4 )
+hframes = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Spear/Rotation"]
+shape = SubResource( 6 )
+
+[node name="Quick" type="AudioStreamPlayer2D" parent="Spear"]
+stream = SubResource( 7 )
+attenuation = 0.5
+
+[node name="Sprite" type="Sprite" parent="."]
+rotation = 0.785398
+texture = ExtResource( 2 )
+
+[node name="CastPoint" type="Position2D" parent="."]
+position = Vector2( 22, 18 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_process_mode = 0
+method_call_mode = 1
+anims/glide = SubResource( 8 )
+anims/launch_charge = SubResource( 9 )
+anims/launch_hold = SubResource( 10 )
+anims/quick = SubResource( 11 )
+anims/rotation = SubResource( 12 )
+anims/stab = SubResource( 13 )
+
+[node name="Skeleton" parent="." instance=ExtResource( 10 )]

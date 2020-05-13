@@ -40,11 +40,6 @@ _global_script_classes=[ {
 "path": "res://player/player.gd"
 }, {
 "base": "Node2D",
-"class": "SpriteRect",
-"language": "GDScript",
-"path": "res://weapon_masters/stages/sprite_rect.gd"
-}, {
-"base": "Node2D",
 "class": "Weapon",
 "language": "GDScript",
 "path": "res://globals/weapon.gd"
@@ -61,7 +56,6 @@ _global_script_class_icons={
 "Hitbox": "res://globals/hitbox.png",
 "PlayerController": "",
 "PlayerEntity": "",
-"SpriteRect": "",
 "Weapon": "res://globals/weapon.png",
 "WeaponResource": "res://globals/weapon_resource.png"
 }

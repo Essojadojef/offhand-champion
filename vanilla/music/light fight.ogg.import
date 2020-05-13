@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/light fight.ogg-ce63ace5465177cb47e7ceb60ace4514.oggstr"
+
+[deps]
+
+source_file="res://vanilla/music/light fight.ogg"
+dest_files=[ "res://.import/light fight.ogg-ce63ace5465177cb47e7ceb60ace4514.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

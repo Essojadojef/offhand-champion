@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=5 format=2]
+
+[ext_resource path="res://globals/weapon_resource.gd" type="Script" id=1]
+[ext_resource path="res://vanilla/weapons/sword/icon.png" type="Texture" id=2]
+[ext_resource path="res://vanilla/weapons/sword/scene.tscn" type="PackedScene" id=3]
+[ext_resource path="res://vanilla/weapons/sword/item_scene.tscn" type="PackedScene" id=4]
+
+
+[resource]
+script = ExtResource( 1 )
+level = 2
+icon = ExtResource( 2 )
+entity_scene = ExtResource( 3 )
+item_scene = ExtResource( 4 )

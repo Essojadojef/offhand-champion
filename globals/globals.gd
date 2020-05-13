@@ -1,6 +1,6 @@
 extends Node
 
-var mods = ["weapon_masters"] # [ String mod_id ]
+var mods = ["vanilla"] # [ String mod_id ]
 var weapons = {} # { String id : WeaponResource weapon }
 
 var colors = [Color.crimson, Color.royalblue, Color.gold, Color.orchid, Color.dimgray]
@@ -76,7 +76,7 @@ func get_weapon(id: String) -> WeaponResource:
 	if id.find(":") != -1:
 		return weapons[id]
 	else:
-		return weapons["weapon_masters:" + id]
+		return weapons["vanilla:" + id]
 
 
 func _unhandled_input(event: InputEvent) -> void:

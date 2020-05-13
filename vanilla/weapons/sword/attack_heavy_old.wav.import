@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/attack_heavy_old.wav-86920b25ee4c6f68cc5180225aba50c7.sample"
+
+[deps]
+
+source_file="res://vanilla/weapons/sword/attack_heavy_old.wav"
+dest_files=[ "res://.import/attack_heavy_old.wav-86920b25ee4c6f68cc5180225aba50c7.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

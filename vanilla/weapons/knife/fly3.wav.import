@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/fly3.wav-3a78f422f74b6ff48b17931b82f072bf.sample"
+
+[deps]
+
+source_file="res://vanilla/weapons/knife/fly3.wav"
+dest_files=[ "res://.import/fly3.wav-3a78f422f74b6ff48b17931b82f072bf.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
