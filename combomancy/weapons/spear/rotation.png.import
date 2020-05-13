@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ranged.png-c40cb0cf54cb91e5e6b242437ec84ea9.stex"
+path="res://.import/rotation.png-5886e8e5d7570e4d17c606a9c887ed54.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/weapons/spear/ranged.png"
-dest_files=[ "res://.import/ranged.png-c40cb0cf54cb91e5e6b242437ec84ea9.stex" ]
+source_file="res://combomancy/weapons/spear/rotation.png"
+dest_files=[ "res://.import/rotation.png-5886e8e5d7570e4d17c606a9c887ed54.stex" ]
 
 [params]
 

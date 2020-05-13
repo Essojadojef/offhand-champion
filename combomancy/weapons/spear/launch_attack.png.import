@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/rotation.png-210e8aa4dc2c81b8438bfa1f4177db3e.stex"
+path="res://.import/launch_attack.png-af9aef1a2d699fb8f38718d6ada123b3.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/weapons/spear/rotation.png"
-dest_files=[ "res://.import/rotation.png-210e8aa4dc2c81b8438bfa1f4177db3e.stex" ]
+source_file="res://combomancy/weapons/spear/launch_attack.png"
+dest_files=[ "res://.import/launch_attack.png-af9aef1a2d699fb8f38718d6ada123b3.stex" ]
 
 [params]
 
