@@ -81,21 +81,20 @@ func get_weapon(id: String) -> WeaponResource:
 
 func _unhandled_input(event: InputEvent) -> void:
 	
-	if event is InputEventKey and event.scancode == KEY_P and !event.is_pressed():
-		Engine.time_scale = -1
-		for i in 10:
-			#get_viewport().propagate_call("_physics_process", [get_physics_process_delta_time() * 60])
-			get_viewport().propagate_notification(NOTIFICATION_INTERNAL_PHYSICS_PROCESS)
-			get_viewport().propagate_notification(NOTIFICATION_PHYSICS_PROCESS)
-			
-		Engine.time_scale = 1
-		return
+	#if event is InputEventKey and event.scancode == KEY_P and !event.is_pressed():
+	#	fast_forward(10)
 	
 	var id = get_event_player(event)
 	
 	if !players.has(id) and accept_new_players:
 		add_player(id)
 	
+
+func fast_forward(frames: int):
+	for i in frames:
+		#get_viewport().propagate_call("_physics_process", [get_physics_process_delta_time() * 60])
+		get_viewport().propagate_notification(NOTIFICATION_INTERNAL_PHYSICS_PROCESS)
+		get_viewport().propagate_notification(NOTIFICATION_PHYSICS_PROCESS)
 
 func get_event_player(event: InputEvent) -> int:
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion :
