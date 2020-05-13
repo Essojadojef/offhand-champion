@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/container_1.png-bcac1f6cb25b4ae76e1e92f0b2190b13.stex"
+path="res://.import/item_container.png-b8ce63d2e386c09f95f743215e162f05.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapon_masters/item/container_1.png"
-dest_files=[ "res://.import/container_1.png-bcac1f6cb25b4ae76e1e92f0b2190b13.stex" ]
+source_file="res://globals/item_container.png"
+dest_files=[ "res://.import/item_container.png-b8ce63d2e386c09f95f743215e162f05.stex" ]
 
 [params]
 
