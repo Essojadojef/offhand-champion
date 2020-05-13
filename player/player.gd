@@ -450,8 +450,16 @@ func throw_weapon(slot: int):
 	if weapons[slot] == "":
 		return
 	
-	var item = load("res://weapon_masters/item/item_container.tscn").instance()
-	item.weapon_id = weapons[slot]
+	var item
+	var weapon = Globals.get_weapon(weapons[slot])
+	
+	if weapon.item_scene:
+		item = weapon.item_scene.instance()
+		
+	else:
+		item = load("res://weapon_masters/item/item_container.tscn").instance()
+		item.weapon_id = weapons[slot]
+		
 	
 	var direction = directional_input.normalized()
 	if !direction:
