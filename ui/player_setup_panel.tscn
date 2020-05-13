@@ -5,7 +5,6 @@
 [ext_resource path="res://weapon_masters/stages/sprite_rect.gd" type="Script" id=3]
 [ext_resource path="res://ui/controls_preview_ground_2.png" type="Texture" id=4]
 
-
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
 
@@ -162,7 +161,7 @@ content_margin_top = 2.0
 content_margin_bottom = 2.0
 bg_color = Color( 0.262745, 0.262745, 0.278431, 1 )
 
-[sub_resource type="StyleBoxFlat" id=17]
+[sub_resource type="StyleBoxFlat" id=7]
 draw_center = false
 border_width_left = 2
 border_width_top = 2
@@ -376,7 +375,7 @@ func _gui_input(event):
 [sub_resource type="StyleBoxFlat" id=16]
 bg_color = Color( 0.145098, 0.145098, 0.164706, 1 )
 
-[sub_resource type="GDScript" id=18]
+[sub_resource type="GDScript" id=17]
 script/source = "extends Control
 
 onready var controller = get_parent().controller
@@ -459,7 +458,7 @@ wrap_around = true
 display_text = 0
 container = NodePath("HBox")
 bg_stylebox = SubResource( 6 )
-selected_stylebox = SubResource( 17 )
+selected_stylebox = SubResource( 7 )
 
 [node name="HBox" type="HBoxContainer" parent="Main/VBox/ColorSelection"]
 anchor_right = 1.0
@@ -503,7 +502,7 @@ text_valign = 2
 container = NodePath("HBox")
 label = NodePath("Label")
 bg_stylebox = SubResource( 6 )
-selected_stylebox = SubResource( 17 )
+selected_stylebox = SubResource( 7 )
 
 [node name="HBox" type="HBoxContainer" parent="Main/VBox/Weapon1Selection"]
 anchor_right = 1.0
@@ -640,7 +639,7 @@ margin_left = -92.0
 margin_top = 122.0
 margin_right = -60.0
 margin_bottom = 154.0
-script = SubResource( 18 )
+script = SubResource( 17 )
 [connection signal="value_changed" from="Main/VBox/ColorSelection" to="." method="_on_ColorSelection_value_changed"]
 [connection signal="pressed" from="Main/VBox/ChangeControls" to="." method="_on_ChangeControls_pressed"]
 [connection signal="value_changed" from="Main/VBox/Weapon1Selection" to="." method="_on_Weapon1Selection_value_changed"]
