@@ -5,6 +5,8 @@ export(Vector2) var spawn_point
 
 var controller : PlayerController = null
 
+var team = ""
+
 ### set by Globals ###
 
 # inputs
@@ -23,11 +25,13 @@ var throw = false
 
 
 
-
+var attack_animation_player
+var weapons_root : Node
 
 #var weapons = {"sword": load("res://weapons/sword/nodes.tscn")}
 var fallback_weapon : Weapon
-var weapons = ["", ""]
+var weapons = ["", ""] # list of weapon ids
+var weapon_nodes = {} # {String id: Node weapon}
 
 var current_weapon : String
 var current_attack : String
@@ -110,6 +114,28 @@ func _exit_tree():
 
 
 
+func add_weapon(id: String) -> Node:
+	assert(!weapon_nodes.has(id))
+	
+	var weapon = Globals.get_weapon(id).entity_scene.instance()
+	weapon_nodes[id] = weapon
+	
+	weapon.user = self
+	weapon.connect("hit", self, "_on_hit")
+	weapon.connect("attack_finished", self, "_on_attack_finished")
+	
+	weapons_root.add_child(weapon, true)
+	
+	return weapon
+
+func remove_weapon(id: String):
+	assert(weapon_nodes.has(id))
+	
+	weapons_root.remove_child(weapon_nodes[id])
+	weapon_nodes[id].queue_free()
+	weapon_nodes.erase(id)
+
+
 func set_weapon(slot: int, id: String):
 	
 	if weapons[slot]:
@@ -129,19 +155,21 @@ func get_weapon_node(slot: int):
 
 
 
-func damage(intensity, push):
+func damage(attacker, damage: float, launch: Vector2):
 	if invulnerability or dodge_time > dodge_iframes:
 		return
 	
-	health -= intensity
+	stun = 60
+	health -= damage
 	
-	if health <= 0:
+	$Hurt.play()
+	
+	.damage(attacker, damage, launch)
+	
+	if health <= 0: # TODO: call die when the entity lands
 		die()
 	
-	.damage(intensity, push * .5)
-	#update() # debugging
-	#airdodge_available = true
-	
+
 
 func die():
 	$Death.play()
@@ -421,7 +449,15 @@ func release_attack(slot: int):
 
 func _on_attack_finished():
 	current_attack = ""
-	
+
+
+
+func can_hit(target: Entity):
+	return target != self
+
+func _on_hit(target: Entity, damage: float, launch: Vector2): 
+	target.damage(self, damage, launch)
+
 
 
 func process_throw():
@@ -484,6 +520,9 @@ func turn():
 
 func process_turning():
 	if turn_time:
+		if on_ground:
+			velocity.x = 0
+		
 		turn_time -= 1
 		
 		if !turn_time:
