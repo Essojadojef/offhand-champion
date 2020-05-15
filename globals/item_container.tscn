@@ -6,21 +6,15 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Entity
 
-export var weapon_id : String
+var weapon_id : String
 
 func _ready():
-	add_to_group(\"items\")
-	
-	if has_meta(\"velocity\"):
-		velocity = get_meta(\"velocity\")
-	
-	if weapon_id:
-		$Icon.texture = Globals.get_weapon(weapon_id).icon
+	$Icon.texture = Globals.get_weapon(weapon_id).icon
 
 func _physics_process(delta):
 	
 	if on_ground:
-		velocity *= .98
+		velocity *= .9
 	
 	# get pushed by near entities
 	for i in $PushArea.get_overlapping_bodies() :

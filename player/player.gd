@@ -497,7 +497,7 @@ func throw_weapon(slot: int):
 		item = weapon.item_scene.instance()
 		
 	else:
-		item = load("res://weapon_masters/item/item_container.tscn").instance()
+		item = load("res://globals/item_container.tscn").instance()
 		item.weapon_id = weapons[slot]
 		
 	
@@ -513,7 +513,7 @@ func throw_weapon(slot: int):
 
 func spawn_projectile(projectile: Entity, initial_position : Vector2, projectile_velocity : Vector2):
 	projectile.global_position = initial_position
-	projectile.set_meta("velocity", projectile_velocity)
+	projectile.velocity = projectile_velocity
 	projectile.set_meta("caster", self)
 	get_parent().add_child(projectile)
 
