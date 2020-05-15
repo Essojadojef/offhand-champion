@@ -43,8 +43,10 @@ var buffered_attack : String
 var aim = 0
 var aiming = false
 
-var items = []
-var selected_item = 0
+var max_items = 1
+var items = [] # list of item ids
+var selected_item = 0 # index of currently selected item
+var item_nodes = {} # {String id: Node item}
 
 var facing = 1
 var turn_time = 0
@@ -219,7 +221,6 @@ func _physics_process(delta: float):
 	
 	if invulnerability :
 		invulnerability -= 1
-		modulate.a = abs(cos(PI * 100 / (invulnerability + 5) + invulnerability * 2))
 	
 	
 	process_jump()
@@ -266,6 +267,9 @@ func process_skeleton():
 		base_color.darkened(.5) if stun else
 		base_color.lightened(.5) if heavy or dodge_time > dodge_recovery else
 		base_color)
+	
+	
+	$Skeleton.modulate.a = abs(sin(invulnerability)) if invulnerability else 1
 	
 	# animation
 	

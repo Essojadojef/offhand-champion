@@ -11,3 +11,4 @@ level = 2
 icon = ExtResource( 2 )
 entity_scene = ExtResource( 3 )
 item_scene = ExtResource( 4 )
+is_item = false

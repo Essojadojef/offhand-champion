@@ -15,3 +15,4 @@ export var entity_scene : PackedScene # added to the player entity when the weap
 export var panel_scene : PackedScene # added to the player panel when the weapon is equipped
 export var item_scene : PackedScene # the weapon when it's an item
 
+export var is_item : bool

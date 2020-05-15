@@ -2,6 +2,7 @@ extends Node
 
 var mods = ["vanilla"] # [ String mod_id ]
 var weapons = {} # { String id : WeaponResource weapon }
+var items = {} # { String id : WeaponResource item }
 
 var colors = [Color.crimson, Color.royalblue, Color.gold, Color.orchid, Color.dimgray]
 
@@ -27,6 +28,7 @@ signal player_(controller)
 func _init() -> void:
 	load_mods()
 	load_weapons()
+	load_items()
 	randomize()
 
 func load_mods():
@@ -54,7 +56,7 @@ func load_weapons():
 	
 	for mod in mods:
 		if !dir.dir_exists("res://%s/weapons/" % mod):
-			return
+			continue
 		
 		var base_dir = "res://%s/weapons/" % mod
 		
@@ -70,13 +72,41 @@ func load_weapons():
 				weapons[id] = load(base_dir + file)
 			
 			file = dir.get_next()
+
+func load_items():
+	print("loading items:")
 	
+	var dir : Directory = Directory.new()
+	
+	for mod in mods:
+		if !dir.dir_exists("res://%s/items/" % mod):
+			continue
+		
+		var base_dir = "res://%s/items/" % mod
+		
+		dir.open(base_dir)
+		dir.list_dir_begin(true, true)
+		var file = dir.get_next()
+		
+		while file:
+			
+			if file.get_extension() == "tres":
+				var id = mod + ":" + file.get_basename()
+				print(" ", id)
+				items[id] = load(base_dir + file)
+			
+			file = dir.get_next()
+
 
 func get_weapon(id: String) -> WeaponResource:
-	if id.find(":") != -1:
-		return weapons[id]
-	else:
-		return weapons["vanilla:" + id]
+	if id.find(":") == -1:
+		id = "vanilla:" + id
+	return weapons[id]
+
+func get_item(id: String) -> WeaponResource:
+	if id.find(":") == -1:
+		id = "vanilla:" + id
+	return items[id]
 
 
 func _unhandled_input(event: InputEvent) -> void:
