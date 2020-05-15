@@ -17,20 +17,21 @@ func _ready():
 func _physics_process(delta):
 	
 	if on_ground:
-		velocity *= .98
+		velocity *= .9
+		
+		# get pushed by near entities
+		for i in $PushArea.get_overlapping_bodies() :
+			if i == self or !i is Entity or !i.on_ground :
+				continue
+			
+			var distance = i.position.x - position.x
+			if !distance :
+				distance = randf() - .5
+			velocity.x -= 32 * sign(distance) - distance
+		
 	else:
 		rotation += delta * 2 * PI
-	
-	# get pushed by near entities
-	for i in $PushArea.get_overlapping_bodies() :
-		if i == self or !i is Entity or !i.on_ground :
-			continue
 		
-		var distance = i.position.x - position.x
-		if !distance :
-			distance = randf() - .5
-		velocity.x -= 32 * sign(distance) - distance
-	
 "
 
 [sub_resource type="CapsuleShape2D" id=2]
