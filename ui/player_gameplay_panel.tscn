@@ -26,11 +26,11 @@ func _physics_process(delta: float) -> void:
 	
 	var weapon = player.weapons[0]
 	$Weapon1/Name.text = player.get_weapon_node(0).name if weapon else \"Free\"
-	$Weapon1/Icon.texture = Globals.get_weapon(weapon).icon if weapon else null
+	$Weapon1/Icon.texture = weapon.icon if weapon else null
 	
 	weapon = player.weapons[1]
 	$Weapon2/Name.text = player.get_weapon_node(1).name if weapon else \"Free\"
-	$Weapon2/Icon.texture = Globals.get_weapon(weapon).icon if weapon else null
+	$Weapon2/Icon.texture = weapon.icon if weapon else null
 	
 
 "

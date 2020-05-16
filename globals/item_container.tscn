@@ -6,10 +6,10 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Entity
 
-var weapon_id : String
+var item : WeaponResource
 
 func _ready():
-	$Icon.texture = Globals.get_weapon(weapon_id).icon
+	$Icon.texture = item.icon
 
 func _physics_process(delta):
 	

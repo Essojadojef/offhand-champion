@@ -22,8 +22,8 @@ func _on_ColorSelection_value_changed(value):
 
 func _on_Weapon1Selection_value_changed(value):
 	var container = $Main/VBox/Weapon1Selection/HBox
-	var id = container.get_child(value).get_meta(\"id\")
-	controller.match_settings.weapon1 = id
+	var weapon = container.get_child(value).get_meta(\"weapon\")
+	controller.match_settings.weapon1 = weapon
 
 
 
@@ -101,12 +101,12 @@ func _ready():
 			continue
 		
 		var node = TextureRect.new()
-		node.texture = Globals.get_weapon(i).icon
+		node.texture = weapon.icon
 		node.rect_min_size = Vector2(16, 16)
-		node.set_meta(\"id\", i)
+		node.set_meta(\"weapon\", weapon)
 		$VBox/Weapon1Selection/HBox.add_child(node)
 	
-	controller.match_settings.weapon1 = \"sword\"
+	controller.match_settings.weapon1 = preload(\"res://vanilla/weapons/sword.tres\")
 
 func get_directional_input_name(axis: int) -> String:
 	if controller.keyboard:

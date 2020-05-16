@@ -68,13 +68,18 @@ func get_random_spawnpoint() :
 	return spawnpoints[randi() % spawnpoints.size()].position
 
 
-func get_random_item() -> String:
+func get_random_item() -> WeaponResource:
 	var pool = []
 	
 	for id in Globals.weapons:
 		var weapon = Globals.get_weapon(id)
 		if weapon.level > WeaponResource.Level.UNCATEGORIZED:
-			pool.append(id)
+			pool.append(weapon)
+	
+	for id in Globals.items:
+		var item = Globals.get_item(id)
+		if item.level > WeaponResource.Level.UNCATEGORIZED:
+			pool.append(item)
 	
 	return pool[randi() % pool.size()]
 
@@ -82,12 +87,12 @@ func _on_ItemSpawnTimer_timeout():
 	var item
 	var weapon = get_random_item()
 	
-	if Globals.get_weapon(weapon).item_scene:
-		item = Globals.get_weapon(weapon).item_scene.instance()
+	if weapon.item_scene:
+		item = weapon.item_scene.instance()
 		
 	else:
 		item = load(\"res://globals/item_container.tscn\").instance()
-		item.weapon_id = weapon
+		item.item = weapon
 		
 	
 	add_child(item)

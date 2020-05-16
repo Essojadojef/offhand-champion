@@ -33,8 +33,8 @@ var fallback_weapon : Weapon
 var weapons = ["", ""] # list of weapon ids
 var weapon_nodes = {} # {String id: Node weapon}
 
-var current_weapon : String
-var current_attack : String
+var current_attack : String # is empty if not currently attacking
+var current_attack_slot : int
 
 var buffer_time = 0
 var buffered_slot : int
@@ -100,11 +100,11 @@ func _ready():
 	
 	weapons_root = $Weapons
 	
-	fallback_weapon = add_weapon("bare")
-	weapon_nodes[""] = fallback_weapon
+	fallback_weapon = add_weapon_node(preload("res://vanilla/weapons/bare.tres"))
+	weapon_nodes[null] = fallback_weapon
 	
-	set_weapon(0, controller.match_settings.weapon1 if controller.match_settings.has("weapon1") else "")
-	set_weapon(1, controller.match_settings.weapon2 if controller.match_settings.has("weapon2") else "")
+	set_weapon(0, controller.match_settings.weapon1 if controller.match_settings.has("weapon1") else null)
+	set_weapon(1, controller.match_settings.weapon2 if controller.match_settings.has("weapon2") else null)
 	#load_item( load("res://weapons/spear/nodes.tscn").instance(), "spear" )
 	#load_item( load("res://weapons/knife/nodes.tscn").instance(), "knife" )
 	
@@ -116,38 +116,38 @@ func _exit_tree():
 
 
 
-func add_weapon(id: String) -> Node:
-	assert(!weapon_nodes.has(id))
+func add_weapon_node(weapon: WeaponResource) -> Node: 
+	assert(!weapon_nodes.has(weapon))
 	
-	var weapon = Globals.get_weapon(id).entity_scene.instance()
-	weapon_nodes[id] = weapon
+	var node = weapon.entity_scene.instance()
+	weapon_nodes[weapon] = node
 	
-	weapon.user = self
-	weapon.connect("hit", self, "_on_hit")
-	weapon.connect("attack_finished", self, "_on_attack_finished")
+	node.user = self
+	node.connect("hit", self, "_on_hit")
+	node.connect("attack_finished", self, "_on_attack_finished")
 	
-	weapons_root.add_child(weapon, true)
+	weapons_root.add_child(node, true)
 	
-	return weapon
+	return node
 
-func remove_weapon(id: String):
-	assert(weapon_nodes.has(id))
+func remove_weapon_node(weapon: WeaponResource):
+	assert(weapon_nodes.has(weapon))
 	
-	weapons_root.remove_child(weapon_nodes[id])
-	weapon_nodes[id].queue_free()
-	weapon_nodes.erase(id)
+	weapons_root.remove_child(weapon_nodes[weapon])
+	weapon_nodes[weapon].queue_free()
+	weapon_nodes.erase(weapon)
 
 
-func set_weapon(slot: int, id: String):
+func set_weapon(slot: int, weapon: WeaponResource):
 	
 	if weapons[slot]:
-		remove_weapon(weapons[slot])
+		remove_weapon_node(weapons[slot])
 	
-	if id:
-		assert(!weapons.has(id))
-		add_weapon(id)
+	if weapon:
+		assert(!weapons.has(weapon))
+		add_weapon_node(weapon)
 	
-	weapons[slot] = id
+	weapons[slot] = weapon
 	
 
 func get_weapon_node(slot: int):
@@ -277,9 +277,10 @@ func process_skeleton():
 		return
 	
 	if current_attack:
+		var current_weapon = weapon_nodes[weapons[current_attack_slot]]
 		
-		if weapon_nodes[current_weapon].animate_skeleton:
-			var skeleton = weapon_nodes[current_weapon].skeleton
+		if current_weapon.animate_skeleton:
+			var skeleton = current_weapon.skeleton
 			
 			$Skeleton/Head.transform = skeleton.get_node("Head").transform
 			$Skeleton/Head/Face.transform = skeleton.get_node("Head/Face").transform
@@ -421,14 +422,14 @@ func process_attack(delta):
 
 func process_attack_slot(slot: int):
 	
-	if !weapon_inputs[slot] and current_attack and current_weapon == weapons[slot]:
+	if current_attack and current_attack_slot == slot and !weapon_inputs[slot]:
 		release_attack(slot)
 		return
 	
 	if weapon_just_pressed[slot]:
 		
-		if pickup_target and weapons[slot] == "" and !weapons.has(pickup_target.weapon_id):
-			set_weapon(slot, pickup_target.weapon_id)
+		if pickup_target and !(pickup_target.item.is_item or weapons[slot] or weapons.has(pickup_target.item)):
+			set_weapon(slot, pickup_target.item)
 			pickup_target.queue_free()
 		
 		if can_attack():
@@ -444,8 +445,8 @@ func buffer_attack(slot: int):
 	buffer_time = 7
 
 func perform_attack(slot: int, attack: String):
-	current_weapon = weapons[slot]
 	current_attack = attack
+	current_attack_slot = slot
 	weapon_nodes[weapons[slot]].attack(attack)
 
 func release_attack(slot: int):
@@ -487,18 +488,18 @@ func process_throw():
 	
 
 func throw_weapon(slot: int):
-	if weapons[slot] == "":
+	if !weapons[slot]:
 		return
 	
 	var item
-	var weapon = Globals.get_weapon(weapons[slot])
+	var weapon = weapons[slot]
 	
 	if weapon.item_scene:
 		item = weapon.item_scene.instance()
 		
 	else:
 		item = load("res://globals/item_container.tscn").instance()
-		item.weapon_id = weapons[slot]
+		item.item = weapons[slot]
 		
 	
 	var direction = directional_input.normalized()
@@ -507,7 +508,7 @@ func throw_weapon(slot: int):
 	
 	spawn_projectile(item, global_position, direction * 500)
 	
-	set_weapon(slot, "")
+	set_weapon(slot, null)
 	
 	#throw_time = 0
 

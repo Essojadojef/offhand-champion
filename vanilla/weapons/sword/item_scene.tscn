@@ -5,7 +5,7 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Entity
 
-var weapon_id = \"sword\"
+var item = load(\"res://vanilla/weapons/sword.tres\")
 
 func _ready():
 	rotation = velocity.angle() + PI if velocity.x < 0 else velocity.angle()
