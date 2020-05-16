@@ -8,10 +8,7 @@ var enemy_max = 2
 export var stage_scene : PackedScene
 var stage : Node2D
 
-var ledges = []
-var occupied_ledges = []
 
-var ground = []
 
 func _ready():
 	
@@ -54,12 +51,6 @@ func _on_EnemyIncreaseTimer_timeout():
 	#_on_EnemySpawnTimer_timeout()
 
 
-func get_random_power_up():
-	var power_ups = [\"health_container\", \"item_container\"]
-	var path = \"res://entities/power_ups/%s.tscn\" % power_ups[randi() % power_ups.size()]
-	return load(path).instance()
-
-
 
 func load_stage(packed_scene: PackedScene):
 	if stage:
@@ -75,10 +66,40 @@ func load_stage(packed_scene: PackedScene):
 func get_random_spawnpoint() :
 	var spawnpoints = stage.get_spawnpoints()
 	return spawnpoints[randi() % spawnpoints.size()].position
+
+
+func get_random_item() -> String:
+	var pool = []
+	
+	for id in Globals.weapons:
+		var weapon = Globals.get_weapon(id)
+		if weapon.level > WeaponResource.Level.UNCATEGORIZED:
+			pool.append(id)
+	
+	return pool[randi() % pool.size()]
+
+func _on_ItemSpawnTimer_timeout():
+	var item
+	var weapon = get_random_item()
+	
+	if Globals.get_weapon(weapon).item_scene:
+		item = Globals.get_weapon(weapon).item_scene.instance()
+		
+	else:
+		item = load(\"res://globals/item_container.tscn\").instance()
+		item.weapon_id = weapon
+		
+	
+	add_child(item)
 "
 
 [node name="World" type="Node2D"]
 script = SubResource( 1 )
+
+[node name="ItemSpawnTimer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 10.0
+autostart = true
 
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 process_mode = 0
@@ -87,5 +108,6 @@ wait_time = 8.0
 [node name="EnemyIncreaseTimer" type="Timer" parent="."]
 process_mode = 0
 wait_time = 40.0
+[connection signal="timeout" from="ItemSpawnTimer" to="." method="_on_ItemSpawnTimer_timeout"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_EnemySpawnTimer_timeout"]
 [connection signal="timeout" from="EnemyIncreaseTimer" to="." method="_on_EnemyIncreaseTimer_timeout"]
