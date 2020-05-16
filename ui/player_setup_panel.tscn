@@ -5,7 +5,6 @@
 [ext_resource path="res://vanilla/stages/sprite_rect.gd" type="Script" id=3]
 [ext_resource path="res://ui/controls_preview_ground_2.png" type="Texture" id=4]
 
-
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
 
@@ -122,7 +121,7 @@ func get_directional_input_name(axis: int) -> String:
 
 
 func _on_focus_changed(new_focus: Control):
-	if is_a_parent_of(new_focus):
+	if new_focus and is_a_parent_of(new_focus):
 		set_v_scroll(new_focus.rect_position.y - rect_size.y / 2)
 		
 "
