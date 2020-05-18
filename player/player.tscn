@@ -1602,6 +1602,8 @@ texture = ExtResource( 1 )
 [node name="CastPoint" type="Position2D" parent="Weapons"]
 script = SubResource( 20 )
 
+[node name="Items" type="Node2D" parent="."]
+
 [node name="TextureProgress" type="TextureProgress" parent="."]
 visible = false
 margin_left = -32.0

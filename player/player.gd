@@ -21,17 +21,15 @@ var heavy_time = 5 # time window in which an attack is considered heavy
 var jump = false
 var weapon_inputs = [false, false]
 var weapon_just_pressed = [false, false]
+var item_input = false
 var throw = false
 
 
 
-var attack_animation_player
-var weapons_root : Node
 
-#var weapons = {"sword": load("res://weapons/sword/nodes.tscn")}
-var fallback_weapon : Weapon
-var weapons = ["", ""] # list of weapon ids
-var weapon_nodes = {} # {String id: Node weapon}
+var weapons = [null, null] # WeaponResources of the current weapons
+onready var weapons_root = $Weapons
+var weapon_nodes = {} # {WeaponResource : Node}
 
 var current_attack : String # is empty if not currently attacking
 var current_attack_slot : int
@@ -44,9 +42,10 @@ var aim = 0
 var aiming = false
 
 var max_items = 1
-var items = [] # list of item ids
-var selected_item = 0 # index of currently selected item
-var item_nodes = {} # {String id: Node item}
+var items = [] # list of WeaponResources
+var selected_item = -1 # index of currently selected item, -1 when none is selected
+onready var items_root = $Items
+var item_nodes = {} # {WeaponResource : Node}
 
 var facing = 1
 var turn_time = 0
@@ -98,15 +97,12 @@ func _ready():
 	
 	randomize()
 	
-	weapons_root = $Weapons
+	weapon_nodes[null] = add_weapon_node(preload("res://vanilla/weapons/bare.tres")) # default weapon
 	
-	fallback_weapon = add_weapon_node(preload("res://vanilla/weapons/bare.tres"))
-	weapon_nodes[null] = fallback_weapon
-	
-	set_weapon(0, controller.match_settings.weapon1 if controller.match_settings.has("weapon1") else null)
-	set_weapon(1, controller.match_settings.weapon2 if controller.match_settings.has("weapon2") else null)
-	#load_item( load("res://weapons/spear/nodes.tscn").instance(), "spear" )
-	#load_item( load("res://weapons/knife/nodes.tscn").instance(), "knife" )
+	if controller.match_settings.has("weapon1"):
+		set_weapon(0, controller.match_settings.weapon1)
+	if controller.match_settings.has("weapon2"):
+		set_weapon(1, controller.match_settings.weapon2)
 	
 	controller.set_physics_process(true)
 
@@ -154,6 +150,24 @@ func get_weapon_node(slot: int):
 	return  weapon_nodes[weapons[slot]]
 	
 
+
+func add_item_node(item: WeaponResource) -> Node:
+	assert(!item_nodes.has(item))
+	
+	var node = item.entity_scene.instance()
+	item_nodes[item] = node
+	
+	node.user = self
+	items_root.add_child(node, true)
+	
+	return node
+
+func remove_item_node(item: WeaponResource):
+	assert(item_nodes.has(item))
+	
+	items_root.remove_child(item_nodes[item])
+	item_nodes[item].queue_free()
+	item_nodes.erase(item)
 
 
 
@@ -228,6 +242,7 @@ func _physics_process(delta: float):
 	
 	process_aim(delta)
 	process_attack(delta)
+	process_item()
 	
 
 func process_inputs():
@@ -462,6 +477,42 @@ func can_hit(target: Entity):
 
 func _on_hit(target: Entity, damage: float, launch: Vector2): 
 	target.damage(self, damage, launch)
+
+
+
+func process_item():
+	var prev_item_input = item_input
+	item_input = get_input().item
+	
+	if item_input and !prev_item_input: # button just pressed
+		
+		if throw and selected_item >= 0:
+			remove_item_node(items[selected_item])
+			
+			# TODO: currently a stack, change the following 2 lines
+			items.pop_back()
+			selected_item = items.size() - 1
+			
+			if !pickup_target:
+				return
+		
+		if pickup_target and pickup_target.item.is_item and !items.has(pickup_target.item):
+			# TODO: currently a stack, change the following 2 lines
+			items.append(pickup_target.item)
+			selected_item = items.size() - 1
+			
+			add_item_node(pickup_target.item)
+			pickup_target.queue_free()
+			
+			return
+		
+		if selected_item >= 0:
+			item_nodes[items[selected_item]].input_pressed()
+		
+	elif !item_input and prev_item_input: # button just released
+		if selected_item >= 0:
+			item_nodes[items[selected_item]].input_released()
+		
 
 
 
