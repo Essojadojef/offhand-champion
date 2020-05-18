@@ -15,6 +15,7 @@ var on_ground = false
 export var gravity = 1500
 
 
+signal damaged(attacker, damage, launch)
 
 var stun = 0
 var combo_damage
@@ -82,11 +83,9 @@ func _physics_process(delta):
 	
 
 func damage(attacker, damage: float, launch: Vector2):
-	
 	combo_damage += damage
-	
 	velocity = launch * clamp(1 + combo_damage / 10, 1, 2) * 100
-	
+	emit_signal("damaged", attacker, damage, launch)
 
 func die() :
 	queue_free()
