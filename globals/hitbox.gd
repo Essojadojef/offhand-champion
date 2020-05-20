@@ -21,7 +21,7 @@ func set_active(value: bool):
 func _ready():
 	set_physics_process(false)
 	collision_layer = 0
-	collision_mask = 1
+	collision_mask = 7
 
 func _physics_process(delta):
 	

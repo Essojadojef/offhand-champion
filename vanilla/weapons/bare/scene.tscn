@@ -5,10 +5,6 @@
 [ext_resource path="res://vanilla/weapons/bare/punch.png" type="Texture" id=3]
 [ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=5]
 
-
-
-
-
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon
 
@@ -841,6 +837,7 @@ position = Vector2( 28, 2 )
 rotation = -0.1309
 z_index = 5
 collision_layer = 0
+collision_mask = 7
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Punch"]
@@ -860,6 +857,7 @@ visible = false
 position = Vector2( 24, 0 )
 z_index = 5
 collision_layer = 0
+collision_mask = 7
 script = ExtResource( 1 )
 launch_angle = -90.0
 
@@ -876,6 +874,7 @@ texture = ExtResource( 3 )
 [node name="Kick" type="Area2D" parent="."]
 position = Vector2( 20, 24 )
 collision_layer = 0
+collision_mask = 7
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Kick"]
@@ -884,6 +883,7 @@ shape = SubResource( 4 )
 [node name="MidairDownKick" type="Area2D" parent="."]
 position = Vector2( 4, 36 )
 collision_layer = 0
+collision_mask = 7
 script = ExtResource( 1 )
 launch_angle = 90.0
 
