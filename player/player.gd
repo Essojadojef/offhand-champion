@@ -54,6 +54,9 @@ var lives = 3
 var health = 100
 var max_health = 100
 
+var stun = 0
+var combo_damage
+
 var invulnerability = 0
 
 var dodge_time = 0
@@ -175,12 +178,14 @@ func damage(attacker, damage: float, launch: Vector2):
 	if invulnerability or dodge_time > dodge_iframes:
 		return
 	
-	stun = 60
 	health -= damage
+	stun = 30
+	combo_damage += damage
 	
 	$Hurt.play()
 	
-	.damage(attacker, damage, launch)
+	velocity = launch * clamp(1 + combo_damage / 10, 1, 2) * 100
+	emit_signal("damaged", attacker, damage, launch)
 	
 	if health <= 0: # TODO: call die when the entity lands
 		die()
@@ -206,6 +211,26 @@ func respawn():
 	
 
 
+func process_collision(collision: KinematicCollision2D):
+	# overrides Entity's process_collision
+	# called inside Entity's _physics_process only if the player and collides with something
+	
+	if stun:
+		velocity = velocity.bounce(collision.normal) * .8
+		
+	else:
+		velocity = velocity.slide(collision.normal)
+		
+		on_ground = Vector2.UP.dot(collision.normal) > 0
+		
+		#var wall_dot_product = Vector2.RIGHT.dot(collision.normal)
+		#on_wall = 1 if wall_dot_product > .65 else -1 if wall_dot_product < -.7 else 0
+		
+		if on_ground:
+			velocity.y = min(velocity.y, 0)
+	
+
+
 func get_input():
 	return controller.get_current_input()
 
@@ -214,6 +239,11 @@ func _physics_process(delta: float):
 	call_deferred("process_skeleton")
 	
 	process_inputs()
+	
+	if stun:
+		stun -= 1
+	else:
+		combo_damage = 0
 	
 	process_turning()
 	
@@ -492,11 +522,8 @@ func process_item():
 			# TODO: currently a stack, change the following 2 lines
 			items.pop_back()
 			selected_item = items.size() - 1
-			
-			if !pickup_target:
-				return
 		
-		if pickup_target and pickup_target.item.is_item and !items.has(pickup_target.item):
+		if selected_item == -1 and pickup_target and pickup_target.item.is_item and !items.has(pickup_target.item):
 			# TODO: currently a stack, change the following 2 lines
 			items.append(pickup_target.item)
 			selected_item = items.size() - 1
@@ -504,10 +531,9 @@ func process_item():
 			add_item_node(pickup_target.item)
 			pickup_target.queue_free()
 			
-			return
-		
-		if selected_item >= 0:
+		elif selected_item >= 0:
 			item_nodes[items[selected_item]].input_pressed()
+			
 		
 	elif !item_input and prev_item_input: # button just released
 		if selected_item >= 0:
