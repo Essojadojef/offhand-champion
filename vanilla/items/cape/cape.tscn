@@ -1,0 +1,61 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var user
+var active_time = 0
+var ready = true
+
+func _ready():
+	if user:
+		user.connect(\"damaged\", self, \"_on_user_damaged\")
+
+func _on_user_damaged():
+	if active_time:
+		active_time = 0
+
+func input_pressed():
+	if ready:
+		active_time = 90
+		ready = false
+	elif active_time:
+		active_time = 0
+
+func input_released():
+	pass
+
+func _physics_process(_delta):
+	if user.on_ground:
+		active_time = 0
+		ready = true
+	
+	$CPUParticles2D.emitting = active_time
+	
+	if active_time:
+		active_time -= 1
+		
+		if user.velocity.y > 0:
+			user.velocity.y *= .5
+
+"
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0, 0.25, 0.75, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[node name="Node2D" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+scale = Vector2( 1, 2 )
+lifetime = 0.5
+emission_shape = 1
+emission_sphere_radius = 32.0
+gravity = Vector2( 0, -80 )
+scale_amount = 2.0
+color_ramp = SubResource( 2 )
+
+[node name="Skeleton" parent="." instance=ExtResource( 1 )]
