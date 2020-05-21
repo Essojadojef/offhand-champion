@@ -8,6 +8,7 @@ var enemy_max = 2
 export var stage_scene : PackedScene
 var stage : Node2D
 
+var drop = null
 
 
 func _ready():
@@ -17,7 +18,6 @@ func _ready():
 		load_stage(stage_scene)
 	else:
 		load_stage(load(\"res://stages/plain/plain.tscn\"))
-	
 
 func add_player(controller: PlayerController): # called by a parent
 	var node = load(\"res://player/player.tscn\").instance()
@@ -84,24 +84,31 @@ func get_random_item() -> WeaponResource:
 	return pool[randi() % pool.size()]
 
 func _on_ItemSpawnTimer_timeout():
-	var item
-	var weapon = get_random_item()
-	
-	if weapon.item_scene:
-		item = weapon.item_scene.instance()
+	if !drop:
+		# select next drop
+		drop = get_random_item()
 		
 	else:
-		item = load(\"res://globals/item_container.tscn\").instance()
-		item.item = weapon
+		# drop selected item
+		var node
 		
-	
-	add_child(item)
+		if drop.item_scene:
+			node = drop.item_scene.instance()
+			
+		else:
+			node = load(\"res://globals/item_container.tscn\").instance()
+			node.item = drop
+			
+		
+		add_child(node)
+		
+		drop = null
 "
 
 [node name="World" type="Node2D"]
 script = SubResource( 1 )
 
-[node name="ItemSpawnTimer" type="Timer" parent="."]
+[node name="DropTimer" type="Timer" parent="."]
 process_mode = 0
 wait_time = 10.0
 autostart = true
@@ -113,6 +120,6 @@ wait_time = 8.0
 [node name="EnemyIncreaseTimer" type="Timer" parent="."]
 process_mode = 0
 wait_time = 40.0
-[connection signal="timeout" from="ItemSpawnTimer" to="." method="_on_ItemSpawnTimer_timeout"]
+[connection signal="timeout" from="DropTimer" to="." method="_on_ItemSpawnTimer_timeout"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_EnemySpawnTimer_timeout"]
 [connection signal="timeout" from="EnemyIncreaseTimer" to="." method="_on_EnemyIncreaseTimer_timeout"]
