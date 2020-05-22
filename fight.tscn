@@ -18,6 +18,10 @@ func _ready():
 		load_stage(stage_scene)
 	else:
 		load_stage(load(\"res://stages/plain/plain.tscn\"))
+	
+	for i in get_tree().get_nodes_in_group(\"bells\"):
+		print(\"bell: \", i)
+		i.connect(\"damaged\", self, \"_on_bell_damaged\")
 
 func add_player(controller: PlayerController): # called by a parent
 	var node = load(\"res://player/player.tscn\").instance()
@@ -87,10 +91,13 @@ func _on_ItemSpawnTimer_timeout():
 	if !drop:
 		# select next drop
 		drop = get_random_item()
+		get_tree().call_group(\"bells\", \"set\", \"score\", 0)
+		get_tree().call_group(\"bells\", \"update_score\", drop)
 		
 	else:
 		# drop selected item
 		var node
+		var bell = get_winning_bell()
 		
 		if drop.item_scene:
 			node = drop.item_scene.instance()
@@ -100,9 +107,50 @@ func _on_ItemSpawnTimer_timeout():
 			node.item = drop
 			
 		
+		node.global_position = (bell.global_position if bell else
+			Vector2() # TODO: Spawn random instead
+			)
+		
 		add_child(node)
 		
 		drop = null
+		get_tree().call_group(\"bells\", \"update_score\")
+	
+	$DropTimer.start(10)
+
+func _on_bell_damaged(attacker, damage, launch):
+	if drop and damage:
+		$DropTimer.start($DropTimer.time_left - damage)
+		
+		var best_score = 0
+		var tie = false
+		
+		for i in get_tree().get_nodes_in_group(\"bells\"):
+			if i.score > best_score:
+				best_score = i.score
+				tie = false
+				
+			elif i.score == best_score:
+				tie = true
+				
+		
+		get_tree().call_group(\"bells\", \"update_score\", drop, best_score, tie)
+	
+
+func get_winning_bell() -> Node2D: # returns null if it's a tie
+	var best_score = 0
+	var bells = [] # more than one if it's a tie
+	
+	for i in get_tree().get_nodes_in_group(\"bells\"):
+		if i.score > best_score:
+			bells.clear()
+			best_score = i.score
+		
+		if i.score == best_score:
+			bells.append(i)
+		
+	
+	return bells[0] if bells.size() == 1 else null
 "
 
 [node name="World" type="Node2D"]

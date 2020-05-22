@@ -1,0 +1,118 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://vanilla/props/bell.svg" type="Texture" id=1]
+[ext_resource path="res://vanilla/props/bell_crown.png" type="Texture" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Entity
+
+var score = 0
+
+var force = 0
+
+func _ready():
+	add_to_group(\"bells\")
+	update_score()
+
+func _physics_process(delta):
+	velocity = Vector2()
+	
+	force += $Sprite.rotation * .5
+	force *= .9
+	
+	$Sprite.rotation -= force * 2 * delta
+	
+	shape_owner_set_transform(0, Transform2D(0, Vector2(0, 32).rotated($Sprite.rotation)))
+
+func damage(attacker, damage: float, launch: Vector2):
+	print(launch)
+	score += damage
+	
+	force += launch.length() * 10 * (1 if launch.x >= 0 else -1)
+	
+	emit_signal(\"damaged\", attacker, damage, launch)
+
+func update_score(drop = null, best_score = 0, tie = false):
+	# called by fight.tscn
+	
+	if !drop:
+		$Control.visible = false
+		
+	else:
+		var diff = score - best_score
+		
+		$Control.visible = true
+		$Control/Score.text = \"%d\" % score
+		$Control/Crown.modulate = Color.dimgray if diff or tie else Color.white
+		$Control/Diff.visible = diff
+		$Control/Diff.text = \"%d\" % diff
+		
+	
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 32.0
+
+[node name="Node2D" type="KinematicBody2D"]
+scale = Vector2( 0.5, 0.5 )
+collision_mask = 0
+script = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+offset = Vector2( 0, 24 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 32 )
+shape = SubResource( 2 )
+
+[node name="Control" type="Control" parent="."]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Label" parent="Control"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -20.0
+margin_top = -22.0
+margin_right = 20.0
+margin_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "100"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crown" type="TextureRect" parent="Control"]
+modulate = Color( 0.4, 0.4, 0.4, 1 )
+margin_left = -16.0
+margin_top = -48.0
+margin_right = 16.0
+margin_bottom = -16.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Diff" type="Label" parent="Control"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -20.0
+margin_top = -36.0
+margin_right = 20.0
+margin_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+custom_colors/font_color = Color( 0.2, 0.2, 0.2, 1 )
+text = "-10"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
