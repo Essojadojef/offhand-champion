@@ -78,8 +78,7 @@ func _ready():
 		\"Jump/Dodge: \" + controller.list_buttons(\"jump\") + \"\\n\" +
 		\"Weapon 1: \" + controller.list_buttons(\"weapon_1\") + \"\\n\" +
 		\"Weapon 2: \" + controller.list_buttons(\"weapon_2\") + \"\\n\" +
-		#\"Item: \" + controller.list_buttons(\"item\") + \"\\n\" +
-		\"Guard [WIP]: \" + controller.list_buttons(\"guard\") + \"\\n\" +
+		\"Item: \" + controller.list_buttons(\"item\") + \"\\n\" +
 		\"Throw: \" + controller.list_buttons(\"throw\"))
 	
 	# color selection
@@ -279,7 +278,7 @@ func list_settings():
 	
 	var root = create_item()
 	
-	for action in [\"jump\", \"weapon_1\", \"weapon_2\", \"guard\", \"throw\"]:
+	for action in [\"jump\", \"weapon_1\", \"weapon_2\", \"item\", \"throw\"]:
 		var item = create_item(root)
 		item.collapsed = true
 		

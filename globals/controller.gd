@@ -62,8 +62,7 @@ func reset_controls_settings():
 			#"jump": [KEY_KP_0],
 			#"weapon_1": [KEY_KP_5],
 			#"weapon_2": [KEY_KP_1],
-			#"item": [KEY_KP_2],
-			#"guard": [KEY_KP_6],
+			#"item": [KEY_KP_6],
 			#"throw": [KEY_KP_ADD]
 			"left": [KEY_A],
 			"right": [KEY_D],
@@ -72,8 +71,7 @@ func reset_controls_settings():
 			"jump": [KEY_SPACE],
 			"weapon_1": [KEY_I],
 			"weapon_2": [KEY_J],
-			"item": [KEY_K],
-			"guard": [KEY_O],
+			"item": [KEY_O],
 			"throw": [KEY_P]
 		} if keyboard else {
 			"left": [],
@@ -84,8 +82,7 @@ func reset_controls_settings():
 			"weapon_1": [JOY_XBOX_B],
 			"weapon_2": [JOY_XBOX_A],
 			"item": [JOY_XBOX_X],
-			"guard": [JOY_R],
-			"throw": [JOY_R2]
+			"throw": [JOY_R, JOY_R2]
 		}
 
 func clear_input_buffer():
