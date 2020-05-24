@@ -8,7 +8,7 @@ var anim_player : AnimationPlayer
 export var animate_skeleton = false
 var skeleton : Node2D
 
-signal hit(weapon, attack_name)
+signal hit(target, damage, launch)
 
 signal attack_finished()
 
@@ -60,3 +60,6 @@ func _on_animation_finished(anim_name: String):
 
 func can_hit(node: Node) -> bool:
 	return user.can_hit(node)
+
+func hit(target: Entity, damage: float, launch: Vector2):
+	emit_signal("hit", target, damage, launch)

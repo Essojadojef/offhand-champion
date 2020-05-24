@@ -5,9 +5,9 @@ export var active: bool = false setget set_active
 
 export var damage : float = 1
 
-export(float) var launch_distance = 1
+export(float) var launch_distance = 1 setget set_launch_distance
 
-export(float) var launch_angle = 0
+export(float) var launch_angle = 0 setget set_launch_angle
 
 var exceptions = []
 
@@ -17,6 +17,18 @@ func set_active(value: bool):
 	
 	if !active:
 		exceptions.clear()
+
+func set_launch_distance(value: float):
+	launch_distance = value
+	
+	if Engine.editor_hint:
+		update()
+
+func set_launch_angle(value: float):
+	launch_angle = value
+	
+	if Engine.editor_hint:
+		update()
 
 func _ready():
 	set_physics_process(false)
@@ -31,9 +43,12 @@ func _physics_process(delta):
 			
 			var launch_vector = Vector2.RIGHT.rotated(global_rotation + deg2rad(launch_angle))
 			launch_vector *= global_scale * launch_distance
-			owner.emit_signal("hit", i, damage, launch_vector)
+			owner.hit(i, damage, launch_vector)
 			
 
 func _draw():
 	if Engine.editor_hint:
-		draw_line(Vector2(), Vector2.RIGHT.rotated(deg2rad(launch_angle)) * launch_distance * 16, Color.black)
+		draw_line(
+			Vector2(),
+			Vector2.RIGHT.rotated(deg2rad(launch_angle)) * launch_distance * 32,
+			Color.black, 2)
