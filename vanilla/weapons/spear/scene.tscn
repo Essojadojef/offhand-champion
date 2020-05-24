@@ -100,8 +100,9 @@ func _on_animation_finished(anim_name: String):
 
 func launch():
 	var node = preload(\"res://vanilla/weapons/spear/projectile.tscn\").instance()
-	var initial_position = $Sprite.global_position
-	user.spawn_projectile(node, initial_position, global_transform.x * 1000)
+	node.weapon = self
+	var direction = global_transform.x.rotated(-PI/10)
+	user.spawn_projectile(node, $Sprite.global_position, direction * 1000)
 	$Sprite.hide()
 	$LaunchSfx.play()
 	emit_signal(\"attack_finished\")
@@ -212,9 +213,20 @@ tracks/1/keys = {
 "update": 1,
 "values": [ true ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
 
 [sub_resource type="Animation" id=8]
-resource_name = "launch_hold"
 length = 0.166667
 loop = true
 step = 0.0166667
@@ -229,6 +241,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector2( -16, -16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
 }
 
 [sub_resource type="Animation" id=9]
@@ -299,7 +323,6 @@ tracks/3/keys = {
 }
 
 [sub_resource type="Animation" id=11]
-resource_name = "stab"
 length = 0.433334
 step = 0.0166667
 tracks/0/type = "value"
@@ -415,9 +438,11 @@ z_index = 1
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
-launch_distance = 0.0
+damage = 1.5
+launch_distance = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Heavy"]
+show_behind_parent = true
 shape = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="Heavy"]
@@ -433,9 +458,10 @@ scale = Vector2( 2, 1 )
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
-launch_angle = -45.0
+launch_angle = -90.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Glide"]
+show_behind_parent = true
 shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="Glide"]

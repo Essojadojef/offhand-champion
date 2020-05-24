@@ -802,23 +802,12 @@ tracks/3/keys = {
 
 [node name="Bare" type="Node2D"]
 script = SubResource( 1 )
+animate_skeleton = true
 
 [node name="Skeleton" parent="." instance=ExtResource( 5 )]
 
 [node name="Head" parent="Skeleton" index="0"]
-position = Vector2( 0, -36 )
 scale = Vector2( 0.9, 1 )
-
-[node name="BodyTop" parent="Skeleton" index="1"]
-position = Vector2( 0, -20 )
-
-[node name="FootL" parent="Skeleton" index="3"]
-position = Vector2( -6, 52 )
-rotation = -0.261799
-
-[node name="FootR" parent="Skeleton" index="4"]
-position = Vector2( 4, 36 )
-rotation = 0.523599
 
 [node name="Hand1" type="Sprite" parent="."]
 show_behind_parent = true
@@ -859,7 +848,9 @@ z_index = 5
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
-launch_angle = -90.0
+damage = 0.5
+launch_distance = 1.5
+launch_angle = -75.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Uppercut"]
 show_behind_parent = true
@@ -872,10 +863,12 @@ rotation = -1.57079
 texture = ExtResource( 3 )
 
 [node name="Kick" type="Area2D" parent="."]
-position = Vector2( 20, 24 )
+position = Vector2( 20, 32 )
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
+damage = 0.8
+launch_angle = -10.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Kick"]
 shape = SubResource( 4 )

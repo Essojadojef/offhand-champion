@@ -8,6 +8,7 @@ script/source = "extends Entity
 
 var grounded = false
 var death_time = 120
+var weapon : Weapon
 
 func _physics_process(_delta: float):
 	if grounded:
@@ -19,9 +20,17 @@ func _physics_process(_delta: float):
 	else:
 		rotation = velocity.angle()
 		
+	
+	$Hitbox.active = true
 
 func process_collision(collision: KinematicCollision2D):
 	grounded = true
+
+func can_hit(entity: Entity) -> bool:
+	return weapon.can_hit(entity)
+
+func hit(target: Entity, damage: float, launch: Vector2):
+	weapon.emit_signal(\"hit\", target, damage, launch)
 "
 
 [sub_resource type="RectangleShape2D" id=2]
@@ -39,14 +48,16 @@ script = SubResource( 1 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
 
-[node name="Heavy" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="."]
 position = Vector2( 36, 0 )
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
-launch_distance = 0.0
+active = true
+damage = 1.5
+launch_distance = 0.5
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Heavy"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
