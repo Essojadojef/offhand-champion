@@ -19,13 +19,13 @@ var players = {}
 var accept_new_players = true
 
 signal player_added(controller)
-signal player_removed(id)
+signal player_removed(controller)
 
-signal player_(controller)
-#signal all_ready()
 
 
 func _init() -> void:
+	Input.connect("joy_connection_changed", self, "_on_joy_connection_changed")
+	
 	load_mods()
 	load_weapons()
 	load_items()
@@ -114,11 +114,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	#if event is InputEventKey and event.scancode == KEY_P and !event.is_pressed():
 	#	fast_forward(10)
 	
-	var id = get_event_player(event)
+	var device = get_event_player(event)
 	
-	if !players.has(id) and accept_new_players:
-		add_player(id)
+	if !players.has(device) and accept_new_players:
+		add_player(device)
 	
+
+func _on_joy_connection_changed(device: int, connected: bool):
+	print("_on_joy_connection_changed: ", device, ", ", connected)
+	if players.has(device) and !connected:
+		remove_player(device)
+
 
 func fast_forward(frames: int):
 	for i in frames:
@@ -135,19 +141,25 @@ func get_event_player(event: InputEvent) -> int:
 
 ### PLAYERS MANAGEMENT
 
-func add_player(id):
-	var controller = PlayerController.new(id)
+func add_player(device: int):
+	var controller = PlayerController.new(device)
 	add_child(controller)
-	players[id] = controller
+	players[device] = controller
 	
 	emit_signal("player_added", controller)
+
+func remove_player(device: int):
+	var controller: PlayerController = players[device]
+	players.erase(device)
+	remove_child(controller)
+	emit_signal("player_removed", controller)
 
 func get_available_color() -> Color:
 	var index = players.size()
 	return colors[index] if index < colors.size() else Color.white
 
-func get_player_entity(id: int) -> Node:
-	return players[id].focus
+func get_player_entity(device: int) -> Node:
+	return players[device].focus
 
 
 

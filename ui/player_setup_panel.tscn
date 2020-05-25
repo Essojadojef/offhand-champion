@@ -12,6 +12,13 @@ signal player_ready()
 
 var controller : PlayerController
 
+func _ready():
+	Globals.connect(\"player_removed\", self, \"_on_player_removed\")
+
+func _on_player_removed(_controller: PlayerController):
+	if _controller == controller:
+		# removed the player this panel is assigned to
+		queue_free()
 
 func grab_controller_focus():
 	show_main()

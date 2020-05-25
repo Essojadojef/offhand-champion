@@ -53,6 +53,7 @@ var turn_time = 0
 var lives = 3
 var health = 100
 var max_health = 100
+signal died()
 
 var stun = 0
 var combo_damage
@@ -108,6 +109,11 @@ func _ready():
 		set_weapon(1, controller.match_settings.weapon2)
 	
 	controller.set_physics_process(true)
+	Globals.connect("player_removed", self, "_on_player_removed")
+
+func _on_player_removed(_controller: PlayerController):
+	if _controller == controller:
+		queue_free()
 
 func _exit_tree():
 	controller.set_physics_process(false)
@@ -195,11 +201,19 @@ func damage(attacker, damage: float, launch: Vector2):
 func die():
 	$Death.play()
 	
+	lives -= 1
+	
+	emit_signal("died")
+	
 	set_physics_process(false)
 	yield(get_tree().create_timer(1), "timeout")
 	
-	respawn()
-	
+	if lives:
+		respawn()
+		
+	else:
+		Globals.remove_player(controller.device)
+		
 
 func respawn():
 	position = spawn_point

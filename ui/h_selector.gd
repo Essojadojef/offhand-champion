@@ -34,7 +34,7 @@ func _gui_input(event: InputEvent):
 		
 
 func get_max_value() -> int:
-	return get_node(container).get_child_count()
+	return get_node(container).get_child_count() if container else 0
 
 func set_value(_value: int):
 	if get_max_value() <= 0:
