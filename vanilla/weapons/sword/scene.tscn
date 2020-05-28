@@ -993,7 +993,6 @@ input_pickable = false
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 9 )
-damage = 1.5
 launch_angle = -15.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Quick"]
@@ -1017,7 +1016,7 @@ position = Vector2( 36, 0 )
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 9 )
-damage = 2.0
+damage = 20
 launch_distance = 2.0
 launch_angle = 80.0
 
@@ -1109,7 +1108,7 @@ scale = Vector2( 3, 3 )
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 9 )
-damage = 5.0
+damage = 50
 launch_distance = 2.0
 
 [node name="Sprite" type="Sprite" parent="Strike"]

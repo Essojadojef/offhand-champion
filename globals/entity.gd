@@ -74,7 +74,7 @@ func process_collision(collision: KinematicCollision2D):
 		velocity.y = min(velocity.y, 0)
 	
 
-func damage(attacker, damage: float, launch: Vector2):
+func damage(attacker, damage: int, launch: Vector2):
 	velocity = launch * 100
 	emit_signal("damaged", attacker, damage, launch)
 

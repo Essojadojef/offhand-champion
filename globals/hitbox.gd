@@ -3,7 +3,7 @@ class_name Hitbox, "hitbox.png"
 
 export var active: bool = false setget set_active
 
-export var damage : float = 1
+export var damage : int = 10
 
 export(float) var launch_distance = 1 setget set_launch_distance
 

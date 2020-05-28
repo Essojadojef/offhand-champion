@@ -51,12 +51,12 @@ var facing = 1
 var turn_time = 0
 
 var lives = 3
-var health = 100
-var max_health = 100
+var health : int = 1000
+var max_health : int = 1000
 signal died()
 
 var stun = 0
-var combo_damage
+var combo_damage : int
 
 var invulnerability = 0
 
@@ -180,7 +180,7 @@ func remove_item_node(item: WeaponResource):
 
 
 
-func damage(attacker, damage: float, launch: Vector2):
+func damage(attacker, damage: int, launch: Vector2):
 	if invulnerability or dodge_time > dodge_iframes:
 		return
 	
@@ -190,7 +190,7 @@ func damage(attacker, damage: float, launch: Vector2):
 	
 	$Hurt.play()
 	
-	velocity = launch * clamp(1 + combo_damage / 10, 1, 2) * 100
+	velocity = launch * clamp(1 + float(combo_damage) / 100, 1, 2) * 100
 	emit_signal("damaged", attacker, damage, launch)
 	
 	if health <= 0: # TODO: call die when the entity lands
@@ -519,7 +519,7 @@ func _on_attack_finished():
 func can_hit(target: Entity):
 	return target != self
 
-func _on_hit(target: Entity, damage: float, launch: Vector2): 
+func _on_hit(target: Entity, damage: int, launch: Vector2): 
 	target.damage(self, damage, launch)
 
 

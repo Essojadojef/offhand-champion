@@ -25,11 +25,10 @@ func _physics_process(delta):
 	
 	shape_owner_set_transform(0, Transform2D(0, Vector2(0, 32).rotated($Sprite.rotation)))
 
-func damage(attacker, damage: float, launch: Vector2):
-	print(launch)
+func damage(attacker, damage: int, launch: Vector2):
 	score += damage
 	
-	force += launch.length() * 10 * (1 if launch.x >= 0 else -1)
+	force += damage * (1 if launch.x >= 0 else -1)
 	$ScoreSfx.play()
 	
 	emit_signal(\"damaged\", attacker, damage, launch)

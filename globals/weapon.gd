@@ -61,5 +61,5 @@ func _on_animation_finished(anim_name: String):
 func can_hit(node: Node) -> bool:
 	return user.can_hit(node)
 
-func hit(target: Entity, damage: float, launch: Vector2):
+func hit(target: Entity, damage: int, launch: Vector2):
 	emit_signal("hit", target, damage, launch)

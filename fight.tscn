@@ -20,7 +20,6 @@ func _ready():
 		load_stage(load(\"res://stages/plain/plain.tscn\"))
 	
 	for i in get_tree().get_nodes_in_group(\"bells\"):
-		print(\"bell: \", i)
 		i.connect(\"damaged\", self, \"_on_bell_damaged\")
 
 func add_player(controller: PlayerController): # called by a parent
@@ -120,7 +119,7 @@ func _on_ItemSpawnTimer_timeout():
 
 func _on_bell_damaged(attacker, damage, launch):
 	if drop and damage:
-		$DropTimer.start($DropTimer.time_left - damage)
+		$DropTimer.start(max($DropTimer.time_left - float(damage) / 10, 0.1))
 		
 		var best_score = 0
 		var tie = false

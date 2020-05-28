@@ -142,12 +142,12 @@ tracks/1/path = NodePath("Glide:active")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
-tracks/1/enabled = false
+tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.0666667, 0.6 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0.0666667, 0.133334, 0.2, 0.266667, 0.333334, 0.400001, 0.466668, 0.533334 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ true, false ]
+"values": [ true, false, true, false, true, false, true, false ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("Glide:visible")
@@ -170,7 +170,7 @@ tracks/3/enabled = true
 tracks/3/keys = {
 "times": PoolRealArray( 0, 0.133333, 0.266667, 0.4, 0.533333 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
-"update": 1,
+"update": 2,
 "values": [ true, true, true, true, true ]
 }
 tracks/4/type = "value"
@@ -438,7 +438,7 @@ z_index = 1
 collision_layer = 0
 collision_mask = 7
 script = ExtResource( 1 )
-damage = 1.5
+damage = 15
 launch_distance = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Heavy"]
