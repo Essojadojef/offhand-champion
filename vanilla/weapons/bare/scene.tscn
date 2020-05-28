@@ -1,9 +1,12 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://globals/hitbox.gd" type="Script" id=1]
 [ext_resource path="res://vanilla/weapons/bare/hand.png" type="Texture" id=2]
 [ext_resource path="res://vanilla/weapons/bare/punch.png" type="Texture" id=3]
+[ext_resource path="res://vanilla/weapons/bare/hit.wav" type="AudioStream" id=4]
 [ext_resource path="res://globals/character_skeleton.tscn" type="PackedScene" id=5]
+[ext_resource path="res://vanilla/weapons/bare/hit2.wav" type="AudioStream" id=6]
+[ext_resource path="res://vanilla/weapons/bare/hit3.wav" type="AudioStream" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon
@@ -164,6 +167,30 @@ tracks/8/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ 0.0 ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("Kick:playing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("Kick/KickSfx:playing")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=7]
@@ -326,6 +353,18 @@ tracks/12/keys = {
 "update": 0,
 "values": [ 0.1, 1.0 ]
 }
+tracks/13/type = "value"
+tracks/13/path = NodePath("HitSfx:playing")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PoolRealArray( 0.183333, 0.283334, 0.383334 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 2,
+"values": [ true, true, true ]
+}
 
 [sub_resource type="Animation" id=8]
 resource_name = "midair_kick"
@@ -475,6 +514,18 @@ tracks/11/keys = {
 "update": 0,
 "values": [ 0.0 ]
 }
+tracks/12/type = "value"
+tracks/12/path = NodePath("HitSfx:playing")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PoolRealArray( 0.068 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="Animation" id=9]
 length = 0.2
@@ -610,6 +661,18 @@ tracks/10/keys = {
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("HitSfx:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 0.068 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=10]
@@ -747,6 +810,18 @@ tracks/10/keys = {
 "update": 1,
 "values": [ true, false ]
 }
+tracks/11/type = "value"
+tracks/11/path = NodePath("HitSfx:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 0.068 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="Animation" id=11]
 length = 0.366667
@@ -799,10 +874,21 @@ tracks/3/keys = {
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
+tracks/4/type = "value"
+tracks/4/path = NodePath("Uppercut/UppercutSfx:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0.0666667 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [node name="Bare" type="Node2D"]
 script = SubResource( 1 )
-animate_skeleton = true
 
 [node name="Skeleton" parent="." instance=ExtResource( 5 )]
 
@@ -810,18 +896,21 @@ animate_skeleton = true
 scale = Vector2( 0.9, 1 )
 
 [node name="Hand1" type="Sprite" parent="."]
+visible = false
 show_behind_parent = true
 position = Vector2( 24, 4 )
 z_index = -4
 texture = ExtResource( 2 )
 
 [node name="Hand2" type="Sprite" parent="."]
+visible = false
 show_behind_parent = true
 position = Vector2( 24, -8 )
 z_index = 4
 texture = ExtResource( 2 )
 
 [node name="Punch" type="Area2D" parent="."]
+visible = false
 position = Vector2( 28, 2 )
 rotation = -0.1309
 z_index = 5
@@ -862,6 +951,10 @@ show_behind_parent = true
 rotation = -1.57079
 texture = ExtResource( 3 )
 
+[node name="UppercutSfx" type="AudioStreamPlayer2D" parent="Uppercut"]
+position = Vector2( -24, -8 )
+stream = ExtResource( 6 )
+
 [node name="Kick" type="Area2D" parent="."]
 position = Vector2( 20, 32 )
 collision_layer = 0
@@ -873,6 +966,10 @@ launch_angle = -10.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Kick"]
 shape = SubResource( 4 )
 
+[node name="KickSfx" type="AudioStreamPlayer2D" parent="Kick"]
+position = Vector2( -20, -32 )
+stream = ExtResource( 7 )
+
 [node name="MidairDownKick" type="Area2D" parent="."]
 position = Vector2( 4, 36 )
 collision_layer = 0
@@ -882,6 +979,10 @@ launch_angle = 90.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MidairDownKick"]
 shape = SubResource( 5 )
+
+[node name="HitSfx" type="AudioStreamPlayer2D" parent="."]
+position = Vector2( -1.90735e-06, 0 )
+stream = ExtResource( 4 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/kick = SubResource( 6 )

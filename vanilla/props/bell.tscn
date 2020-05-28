@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://vanilla/props/bell.svg" type="Texture" id=1]
 [ext_resource path="res://vanilla/props/bell_crown.png" type="Texture" id=2]
+[ext_resource path="res://combomancy/sounds/score.wav" type="AudioStream" id=3]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Entity
@@ -29,6 +30,7 @@ func damage(attacker, damage: float, launch: Vector2):
 	score += damage
 	
 	force += launch.length() * 10 * (1 if launch.x >= 0 else -1)
+	$ScoreSfx.play()
 	
 	emit_signal(\"damaged\", attacker, damage, launch)
 
@@ -65,6 +67,10 @@ offset = Vector2( 0, 24 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 32 )
 shape = SubResource( 2 )
+
+[node name="ScoreSfx" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+attenuation = 0.00240458
 
 [node name="Control" type="Control" parent="."]
 __meta__ = {

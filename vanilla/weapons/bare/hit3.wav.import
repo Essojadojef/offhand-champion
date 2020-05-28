@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/hit3.wav-d019b36e723bb6253d75b2d4a8a7325b.sample"
+
+[deps]
+
+source_file="res://vanilla/weapons/bare/hit3.wav"
+dest_files=[ "res://.import/hit3.wav-d019b36e723bb6253d75b2d4a8a7325b.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
