@@ -11,7 +11,6 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Weapon
 
-
 func _ready():
 	$Punch.hide()
 	
@@ -23,6 +22,9 @@ func _ready():
 		$Hand2.modulate = user.controller.color
 	$Hand1.hide()
 	$Hand2.hide()
+	
+	anim_player = $AnimationPlayer
+	anim_player.connect(\"animation_finished\", self, \"_on_animation_finished\")
 
 func get_attack() -> String:
 	
@@ -41,6 +43,9 @@ func get_attack() -> String:
 		
 		return \"midair_kick\"
 		
+
+func _on_animation_finished(_anim_name: String):
+	emit_signal(\"attack_ended\")
 "
 
 [sub_resource type="CapsuleShape2D" id=2]
@@ -889,6 +894,7 @@ tracks/4/keys = {
 
 [node name="Bare" type="Node2D"]
 script = SubResource( 1 )
+animate_skeleton = true
 
 [node name="Skeleton" parent="." instance=ExtResource( 5 )]
 
@@ -914,7 +920,7 @@ visible = false
 position = Vector2( 28, 2 )
 rotation = -0.1309
 z_index = 5
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 1 )
 
@@ -934,7 +940,7 @@ texture = ExtResource( 3 )
 visible = false
 position = Vector2( 24, 0 )
 z_index = 5
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 1 )
 damage = 5
@@ -957,7 +963,7 @@ stream = ExtResource( 6 )
 
 [node name="Kick" type="Area2D" parent="."]
 position = Vector2( 20, 32 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 1 )
 damage = 8
@@ -972,7 +978,7 @@ stream = ExtResource( 7 )
 
 [node name="MidairDownKick" type="Area2D" parent="."]
 position = Vector2( 4, 36 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 1 )
 launch_angle = 90.0

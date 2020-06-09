@@ -26,6 +26,7 @@ func _ready() -> void:
 	$Sprite.hide()
 	
 	anim_player = $AnimationPlayer
+	anim_player.connect(\"animation_finished\", self, \"_on_animation_finished\")
 
 func get_attack() -> String:
 	if user.heavy :
@@ -37,6 +38,8 @@ func get_attack() -> String:
 		return \"down_blow\"
 	
 	return \"forward_slash\"
+
+
 
 func input_released():
 	if get_current_animation() == \"strike_hold\":
@@ -52,17 +55,17 @@ func _on_animation_finished(anim_name: String):
 		
 		if release_strike:
 			release_strike = false
-			user.aiming = false
 			attack(\"strike\")
 			
 		else:
+			user.aiming = true
 			attack(\"strike_hold\")
 			
 		
 		return
 		
 	
-	emit_signal(\"attack_finished\")
+	emit_signal(\"attack_ended\")
 "
 
 [sub_resource type="AudioStreamRandomPitch" id=2]
@@ -990,7 +993,7 @@ attenuation = 0.5
 visible = false
 position = Vector2( 36, 0 )
 input_pickable = false
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
 launch_angle = -15.0
@@ -1013,7 +1016,7 @@ attenuation = 0.499999
 [node name="DownTilt" type="Area2D" parent="."]
 visible = false
 position = Vector2( 36, 0 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
 damage = 20
@@ -1045,7 +1048,7 @@ visible = false
 modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 0, -32 )
 scale = Vector2( 3, 3 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
 launch_distance = 1.5
@@ -1072,7 +1075,7 @@ attenuation = 0.5
 modulate = Color( 1, 1, 1, 0 )
 rotation = -6.28319
 scale = Vector2( 0.6, 0.6 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
 
@@ -1105,7 +1108,7 @@ visible = false
 modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 80, 0 )
 scale = Vector2( 3, 3 )
-collision_layer = 0
+collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
 damage = 50
@@ -1175,8 +1178,8 @@ anims/up_slash = SubResource( 16 )
 
 [node name="Sprite" type="Sprite" parent="."]
 visible = false
-position = Vector2( 16, 0 )
-rotation = 0.785398
+position = Vector2( 9, 21.18 )
+rotation = 1.60556
 scale = Vector2( 0.33, 0.33 )
 z_index = 16
 texture = ExtResource( 3 )

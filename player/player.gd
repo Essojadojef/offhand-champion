@@ -129,7 +129,8 @@ func add_weapon_node(weapon: WeaponResource) -> Node:
 	
 	node.user = self
 	node.connect("hit", self, "_on_hit")
-	node.connect("attack_finished", self, "_on_attack_finished")
+	node.connect("attack_ended", self, "_on_attack_ended")
+	node.connect("clashed", self, "_on_clashed")
 	
 	weapons_root.add_child(node, true)
 	
@@ -511,7 +512,7 @@ func perform_attack(slot: int, attack: String):
 func release_attack(slot: int):
 	weapon_nodes[weapons[slot]].input_released()
 
-func _on_attack_finished():
+func _on_attack_ended():
 	current_attack = ""
 
 
@@ -521,6 +522,11 @@ func can_hit(target: Entity):
 
 func _on_hit(target: Entity, damage: int, launch: Vector2): 
 	target.damage(self, damage, launch)
+
+func _on_clashed(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
+	var clash = preload("res://globals/clash.tscn").instance()
+	clash.hitboxes = [user_hitbox, opponent_hitbox]
+	get_parent().add_child(clash)
 
 
 

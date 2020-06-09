@@ -32,19 +32,30 @@ func set_launch_angle(value: float):
 
 func _ready():
 	set_physics_process(false)
-	collision_layer = 0
+	collision_layer = 2
 	collision_mask = 7
 
 func _physics_process(delta):
 	
+	for i in get_overlapping_areas():
+		if get_script() == i.get_script(): # is Hitbox
+			var opponent = i.owner.user
+			if i.active and can_hit(opponent):
+				# clashed
+				exceptions.append(opponent)
+				owner.clash(self, i)
+	
 	for i in get_overlapping_bodies():
-		if i is Entity and owner.can_hit(i) and !exceptions.has(i):
+		if i is Entity and can_hit(i):
 			exceptions.append(i)
 			
 			var launch_vector = Vector2.RIGHT.rotated(global_rotation + deg2rad(launch_angle))
 			launch_vector *= global_scale * launch_distance
 			owner.hit(i, damage, launch_vector)
 			
+
+func can_hit(entity: Entity):
+	return !exceptions.has(entity) and owner.can_hit(entity)
 
 func _draw():
 	if Engine.editor_hint:

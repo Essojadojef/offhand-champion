@@ -4,58 +4,35 @@ class_name Weapon, "weapon.png"
 var user
 
 var anim_player : AnimationPlayer
-
-export var animate_skeleton = false
 var skeleton : Node2D
 
+# properties that can be animated
+export var animate_skeleton = false
+
 signal hit(target, damage, launch)
+signal clashed(user_hitbox, opponent_hitbox)
+signal attack_ended()
 
-signal attack_finished()
-
-func _ready() -> void:
-	anim_player
-	$AnimationPlayer.connect("animation_finished", self, "_on_animation_finished")
-
-# warning-ignore:unused_argument
-
-func attack(attack_name: String):
-	$AnimationPlayer.play(attack_name)
-
-func get_current_animation() -> String:
-	return $AnimationPlayer.current_animation
-
-
-
-
-
-func aim():
-	user.aiming = true
-
-
-func input_released(): pass # virtual
-
-
-func is_locked() -> bool:
-	return $AnimationPlayer.is_playing()
-
-"""func can_cancel(current_weapon, tilt: int, heavy: bool) -> bool:
-	# returns if this weapon can cancel the attack of current_weapon
-	var attack : String = get_attack(tilt, heavy)
-	
-	if current_weapon.name == name and current_attack == attack and repeating_attacks.has(attack):
-		return true
-	
-	return false"""
-
-func cancel():
-	$AnimationPlayer.stop()
 
 
 func get_attack() -> String: # virtual
 	return ""
 
-func _on_animation_finished(anim_name: String):
-	emit_signal("attack_finished")
+func attack(attack_name: String):
+	if anim_player:
+		anim_player.play(attack_name)
+
+func get_current_animation() -> String:
+	return anim_player.current_animation if anim_player else ""
+
+func input_released(): # virtual
+	pass
+
+func cancel():
+	assert(anim_player.is_playing())
+	anim_player.seek(anim_player.current_animation.length(), true)
+	emit_signal("attack_ended")
+
 
 
 func can_hit(node: Node) -> bool:
@@ -63,3 +40,19 @@ func can_hit(node: Node) -> bool:
 
 func hit(target: Entity, damage: int, launch: Vector2):
 	emit_signal("hit", target, damage, launch)
+
+func clash(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
+	emit_signal("clashed", user_hitbox, opponent_hitbox)
+	var opponent_weapon = opponent_hitbox.owner
+	
+	anim_player.stop(false)
+	opponent_weapon.anim_player.stop(false)
+	
+	yield(get_tree().create_timer(.2), "timeout")
+	
+	anim_player.play()
+	opponent_weapon.anim_player.play()
+	
+	cancel()
+	opponent_weapon.cancel()
+
