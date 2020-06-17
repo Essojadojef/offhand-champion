@@ -22,7 +22,8 @@ func _physics_process(delta: float) -> void:
 	var player = controller.focus as PlayerEntity
 	if !player: return
 	
-	$Health.value = player.health / player.max_health * $Health.max_value
+	$Health.value = player.health
+	$Health.max_value = player.max_health
 	$Lives/Label.text = str(player.lives)
 	
 	var weapon = player.weapons[0]

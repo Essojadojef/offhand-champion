@@ -27,34 +27,21 @@ func _physics_process(delta):
 		velocity.x -= 32 * sign(distance) - distance
 	
 
-\"\"\"func damage( intensity, push = Vector2() ):
-	
-	damage -= intensity
-	
-	velocity = Vector2()
-	initial_forced_velocity = push * ( damage + 10 ) * 10
-	forced_velocity = initial_forced_velocity
-	stun = true
-	
-	if damage <= 0 :
-		win()
+func process_collision(collision: KinematicCollision2D):
+	if velocity.length() >= 1:
+		velocity = velocity.bounce(collision.normal) * .5
+		
+	else:
+		velocity = velocity.slide(collision.normal)
+		on_ground = Vector2.UP.dot(collision.normal) > 0
+		
+		if on_ground:
+			velocity.y = min(velocity.y, 0)
 
-func die():
-	queue_free()
-
-func win():
-	#for i in get_tree().get_nodes_in_group(\"players\"):
-	#	i.damage = max( i.damage - 20, 0 )
-	
-	layers = 0
-	set_physics_process(false)
-	
-	$\"DamageIndicator\".visible = false
-	$\"AudioStreamPlayer2D\".play()
-	$\"AnimationPlayer\".play(\"Break\")
-	
-	yield( get_tree().create_timer(2), \"timeout\" )
-	queue_free()\"\"\"
+func damage(attacker, damage: int, launch: Vector2):
+	velocity = launch * (1 + float(damage) / 10) * 100
+	hitlag = damage * launch.length() * .2
+	emit_signal(\"damaged\", attacker, damage, launch)
 "
 
 [sub_resource type="CircleShape2D" id=2]

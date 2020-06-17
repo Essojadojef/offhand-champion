@@ -16,6 +16,9 @@ func _ready():
 	update_score()
 
 func _physics_process(delta):
+	if hitlag:
+		return
+	
 	velocity = Vector2()
 	
 	force += $Sprite.rotation * .5
@@ -26,8 +29,8 @@ func _physics_process(delta):
 	shape_owner_set_transform(0, Transform2D(0, Vector2(0, 32).rotated($Sprite.rotation)))
 
 func damage(attacker, damage: int, launch: Vector2):
+	.damage(attacker, damage, launch)
 	score += damage
-	
 	force += damage * (1 if launch.x >= 0 else -1)
 	$ScoreSfx.play()
 	
