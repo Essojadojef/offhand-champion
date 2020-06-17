@@ -29,7 +29,6 @@ func input_released(): # virtual
 	pass
 
 func cancel():
-	assert(anim_player.is_playing())
 	anim_player.seek(anim_player.current_animation.length(), true)
 	emit_signal("attack_ended")
 
@@ -44,15 +43,4 @@ func hit(target: Entity, damage: int, launch: Vector2):
 func clash(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	emit_signal("clashed", user_hitbox, opponent_hitbox)
 	var opponent_weapon = opponent_hitbox.owner
-	
-	anim_player.stop(false)
-	opponent_weapon.anim_player.stop(false)
-	
-	yield(get_tree().create_timer(.2), "timeout")
-	
-	anim_player.play()
-	opponent_weapon.anim_player.play()
-	
-	cancel()
-	opponent_weapon.cancel()
 

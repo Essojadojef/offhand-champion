@@ -55,6 +55,7 @@ var health : int = 1000
 var max_health : int = 1000
 signal died()
 
+var knockback : Vector2
 var stun = 0
 var combo_damage : int
 
@@ -181,24 +182,6 @@ func remove_item_node(item: WeaponResource):
 
 
 
-func damage(attacker, damage: int, launch: Vector2):
-	if invulnerability or dodge_time > dodge_iframes:
-		return
-	
-	health -= damage
-	stun = 30
-	combo_damage += damage
-	
-	$Hurt.play()
-	
-	velocity = launch * clamp(1 + float(combo_damage) / 100, 1, 2) * 100
-	emit_signal("damaged", attacker, damage, launch)
-	
-	if health <= 0: # TODO: call die when the entity lands
-		die()
-	
-
-
 func die():
 	$Death.play()
 	
@@ -225,6 +208,29 @@ func respawn():
 	set_physics_process(true)
 	
 
+
+func process_hitlag():
+	# overrides Entity's process_hitlag
+	# called inside Entity's _physics_process only if hitlag != 0
+	
+	if current_attack:
+		weapon_nodes[weapons[current_attack_slot]].anim_player.stop(false)
+	
+	hitlag -= 1
+	
+	if !hitlag:
+		if current_attack:
+			weapon_nodes[weapons[current_attack_slot]].anim_player.play()
+			
+		elif knockback:
+			# apply knockback + directional influence
+			
+			#var knockback_general_direction = Vector2.RIGHT.rotated(stepify(knockback.angle(), PI/4))
+			
+			var influrence = directional_input.normalized().dot(knockback.normalized())
+			velocity = knockback * (1 + influrence * .5)
+			knockback = Vector2()
+			
 
 func process_collision(collision: KinematicCollision2D):
 	# overrides Entity's process_collision
@@ -255,10 +261,11 @@ func _physics_process(delta: float):
 	
 	process_inputs()
 	
-	if stun:
-		stun -= 1
-	else:
-		combo_damage = 0
+	if !hitlag:
+		if stun:
+			stun -= 1
+		else:
+			combo_damage = 0
 	
 	process_turning()
 	
@@ -446,7 +453,7 @@ func process_aim(delta: float):
 	
 
 func can_attack():
-	return !(stun or current_attack or dodge_time or turn_time or jump_startup)
+	return !(stun or current_attack or dodge_time or turn_time or jump_startup or hitlag)
 
 func process_attack(delta):
 	
@@ -522,11 +529,35 @@ func can_hit(target: Entity):
 
 func _on_hit(target: Entity, damage: int, launch: Vector2): 
 	target.damage(self, damage, launch)
+	hitlag = damage * launch.length() * .2
 
 func _on_clashed(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
+	hitlag = user_hitbox.damage + opponent_hitbox.damage / 2
+	
 	var clash = preload("res://globals/clash.tscn").instance()
 	clash.hitboxes = [user_hitbox, opponent_hitbox]
 	get_parent().add_child(clash)
+
+func damage(attacker, damage: int, launch: Vector2):
+	if invulnerability or dodge_time > dodge_iframes:
+		return
+	
+	health -= damage
+	hitlag = damage * launch.length() * .2
+	stun = 30
+	combo_damage += damage
+	
+	$Hurt.play()
+	
+	if current_attack:
+		weapon_nodes[weapons[current_attack_slot]].cancel()
+	
+	knockback = launch * clamp(1 + float(combo_damage) / 50, 1, 2) * 100
+	emit_signal("damaged", attacker, damage, launch)
+	
+	if health <= 0: # TODO: call die when the entity lands
+		die()
+	
 
 
 
