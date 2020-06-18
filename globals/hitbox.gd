@@ -1,6 +1,8 @@
 tool extends Area2D
 class_name Hitbox, "hitbox.png"
 
+onready var weapon = owner
+
 export var active: bool = false setget set_active
 
 export var damage : int = 10
@@ -39,23 +41,31 @@ func _physics_process(delta):
 	
 	for i in get_overlapping_areas():
 		if get_script() == i.get_script(): # is Hitbox
-			var opponent = i.owner.user
+			var opponent = i.get_user()
 			if i.active and can_hit(opponent):
 				# clashed
 				exceptions.append(opponent)
-				owner.clash(self, i)
+				weapon.clash(self, i)
 	
 	for i in get_overlapping_bodies():
 		if i is Entity and can_hit(i):
 			exceptions.append(i)
 			
-			var launch_vector = Vector2.RIGHT.rotated(global_rotation + deg2rad(launch_angle))
-			launch_vector *= global_scale * launch_distance
-			owner.hit(i, damage, launch_vector)
+			i.damage(self) # makes the target take damage from this hitbox
+			weapon.emit_signal("hit", i, self) # tells the user that the hit connected
 			
 
 func can_hit(entity: Entity):
-	return !exceptions.has(entity) and owner.can_hit(entity)
+	return !exceptions.has(entity) and weapon.can_hit(entity)
+
+func get_user() -> Entity:
+	return weapon.user
+
+func get_knockback() -> Vector2:
+	return Vector2.RIGHT.rotated(global_rotation + deg2rad(launch_angle)) * global_scale * launch_distance
+
+func get_hitlag() -> int:
+	return int(damage * get_knockback().length() * .2)
 
 func _draw():
 	if Engine.editor_hint:

@@ -9,7 +9,7 @@ var skeleton : Node2D
 # properties that can be animated
 export var animate_skeleton = false
 
-signal hit(target, damage, launch)
+signal hit(target, hitbox) # emitted by hitboxes
 signal clashed(user_hitbox, opponent_hitbox)
 signal attack_ended()
 
@@ -36,9 +36,6 @@ func cancel():
 
 func can_hit(node: Node) -> bool:
 	return user.can_hit(node)
-
-func hit(target: Entity, damage: int, launch: Vector2):
-	emit_signal("hit", target, damage, launch)
 
 func clash(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	emit_signal("clashed", user_hitbox, opponent_hitbox)

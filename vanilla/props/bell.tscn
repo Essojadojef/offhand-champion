@@ -28,13 +28,11 @@ func _physics_process(delta):
 	
 	shape_owner_set_transform(0, Transform2D(0, Vector2(0, 32).rotated($Sprite.rotation)))
 
-func damage(attacker, damage: int, launch: Vector2):
-	.damage(attacker, damage, launch)
-	score += damage
-	force += damage * (1 if launch.x >= 0 else -1)
+func damage(hitbox: Hitbox):
+	score += hitbox.damage
+	force += hitbox.damage * (1 if hitbox.get_knockback().x >= 0 else -1)
 	$ScoreSfx.play()
-	
-	emit_signal(\"damaged\", attacker, damage, launch)
+	.damage(hitbox)
 
 func update_score(drop = null, best_score = 0, tie = false):
 	# called by fight.tscn

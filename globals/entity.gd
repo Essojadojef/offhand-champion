@@ -17,7 +17,7 @@ var on_ground = false
 var gravity = 1500
 
 
-signal damaged(attacker, damage, launch)
+signal damaged(hitbox)
 
 var state_queue = []
 var state_queue_index = 0
@@ -82,10 +82,10 @@ func process_collision(collision: KinematicCollision2D):
 		velocity.y = min(velocity.y, 0)
 	
 
-func damage(attacker, damage: int, launch: Vector2):
-	velocity = launch * 100
-	hitlag = damage * launch.length() * .2
-	emit_signal("damaged", attacker, damage, launch)
+func damage(hitbox):
+	velocity = hitbox.get_knockback() * 100
+	hitlag = hitbox.get_hitlag()
+	emit_signal("damaged", hitbox)
 
 func die() :
 	queue_free()

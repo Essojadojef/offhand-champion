@@ -117,7 +117,8 @@ func _on_ItemSpawnTimer_timeout():
 	
 	$DropTimer.start(10)
 
-func _on_bell_damaged(attacker, damage, launch):
+func _on_bell_damaged(hitbox):
+	var damage = hitbox.damage
 	if drop and damage:
 		$DropTimer.start(max($DropTimer.time_left - float(damage) / 10, 0.1))
 		

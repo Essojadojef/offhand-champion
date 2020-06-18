@@ -38,10 +38,11 @@ func process_collision(collision: KinematicCollision2D):
 		if on_ground:
 			velocity.y = min(velocity.y, 0)
 
-func damage(attacker, damage: int, launch: Vector2):
-	velocity = launch * (1 + float(damage) / 10) * 100
-	hitlag = damage * launch.length() * .2
-	emit_signal(\"damaged\", attacker, damage, launch)
+func damage(hitbox):
+	var damage = hitbox.damage
+	velocity = hitbox.get_knockback() * (1 + float(damage) / 10) * 100
+	hitlag = damage * hitbox.get_knockback().length() * .2
+	emit_signal(\"damaged\", hitbox)
 "
 
 [sub_resource type="CircleShape2D" id=2]

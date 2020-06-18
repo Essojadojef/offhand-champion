@@ -527,9 +527,8 @@ func _on_attack_ended():
 func can_hit(target: Entity):
 	return target != self
 
-func _on_hit(target: Entity, damage: int, launch: Vector2): 
-	target.damage(self, damage, launch)
-	hitlag = damage * launch.length() * .2
+func _on_hit(target: Entity, hitbox: Hitbox):
+	hitlag = hitbox.get_hitlag()
 
 func _on_clashed(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	hitlag = user_hitbox.damage + opponent_hitbox.damage / 2
@@ -538,12 +537,14 @@ func _on_clashed(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	clash.hitboxes = [user_hitbox, opponent_hitbox]
 	get_parent().add_child(clash)
 
-func damage(attacker, damage: int, launch: Vector2):
+func damage(hitbox: Hitbox):
 	if invulnerability or dodge_time > dodge_iframes:
 		return
+	var damage = hitbox.damage
+	var launch = hitbox.get_knockback()
 	
 	health -= damage
-	hitlag = damage * launch.length() * .2
+	hitlag = hitbox.get_hitlag()
 	stun = 30
 	combo_damage += damage
 	
@@ -553,7 +554,7 @@ func damage(attacker, damage: int, launch: Vector2):
 		weapon_nodes[weapons[current_attack_slot]].cancel()
 	
 	knockback = launch * clamp(1 + float(combo_damage) / 50, 1, 2) * 100
-	emit_signal("damaged", attacker, damage, launch)
+	emit_signal("damaged", hitbox)
 	
 	if health <= 0: # TODO: call die when the entity lands
 		die()
