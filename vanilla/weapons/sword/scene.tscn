@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://vanilla/weapons/sword/attack_quick.wav" type="AudioStream" id=1]
 [ext_resource path="res://vanilla/weapons/sword/rotation_attack.wav" type="AudioStream" id=2]
@@ -17,16 +17,6 @@ script/source = "extends Weapon
 
 var release_strike = false
 
-func _ready() -> void:
-	$Quick.hide()
-	$UpTilt.hide()
-	$DownTilt.hide()
-	$Rotation.hide()
-	$Strike.hide()
-	$Sprite.hide()
-	
-	anim_player = $AnimationPlayer
-	anim_player.connect(\"animation_finished\", self, \"_on_animation_finished\")
 
 func get_attack() -> String:
 	if user.heavy :
@@ -42,11 +32,11 @@ func get_attack() -> String:
 
 
 func input_released():
-	if get_current_animation() == \"strike_hold\":
+	if anim_player.current_animation == \"strike_hold\":
 		attack(\"strike\")
 		user.aiming = false
 		
-	elif get_current_animation() == \"strike_charge\":
+	elif anim_player.current_animation == \"strike_charge\":
 		release_strike = true
 		
 
@@ -65,7 +55,7 @@ func _on_animation_finished(anim_name: String):
 		return
 		
 	
-	emit_signal(\"attack_ended\")
+	._on_animation_finished(anim_name)
 "
 
 [sub_resource type="AudioStreamRandomPitch" id=2]
@@ -82,7 +72,7 @@ audio_stream = ExtResource( 1 )
 audio_stream = ExtResource( 6 )
 
 [sub_resource type="CircleShape2D" id=6]
-radius = 16.0
+radius = 48.0
 
 [sub_resource type="CircleShape2D" id=7]
 radius = 32.0
@@ -255,9 +245,230 @@ tracks/4/keys = {
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.1, 0.166667, 0.300001 ),
+"transitions": PoolRealArray( 0.5, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 24, -8 ), Vector2( 40, 4.86374e-05 ), Vector2( 40, 8 ), Vector2( 9.05991e-06, -4.29153e-06 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprite:rotation_degrees")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.1, 0.166667, 0.3 ),
+"transitions": PoolRealArray( 0.5, 1, 2, 1 ),
+"update": 0,
+"values": [ 30.0, 45.0, 59.9999, 30.0 ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Sprite:z_index")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ -16, 16 ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Sprite:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0, 0.0333333, 0.1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ true, false, true ]
+}
 
 [sub_resource type="Animation" id=11]
-resource_name = "rotation"
+resource_name = "idle"
+length = 2.0
+loop = true
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Quick:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Quick:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("DownTilt:active")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("DownTilt:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("UpTilt:active")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("UpTilt:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Rotation:active")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Rotation:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Strike:active")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("Strike:visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("Sprite:visible")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("Sprite:position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( -2, -2 ),
+"update": 0,
+"values": [ Vector2( 8, 0 ), Vector2( 8, -4 ) ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("Sprite:rotation_degrees")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath("Sprite:z_index")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 16 ]
+}
+
+[sub_resource type="Animation" id=12]
 length = 0.3
 step = 0.05
 tracks/0/type = "value"
@@ -345,8 +556,7 @@ tracks/6/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=12]
-resource_name = "spin"
+[sub_resource type="Animation" id=13]
 length = 0.2
 loop = true
 step = 0.05
@@ -423,7 +633,7 @@ tracks/5/keys = {
 "values": [ 16, -16, -16, 16, 16 ]
 }
 
-[sub_resource type="Animation" id=13]
+[sub_resource type="Animation" id=14]
 length = 0.500001
 step = 0.0166667
 tracks/0/type = "value"
@@ -607,7 +817,7 @@ tracks/14/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=15]
 length = 0.166667
 step = 0.0166667
 tracks/0/type = "value"
@@ -769,7 +979,7 @@ tracks/12/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=15]
+[sub_resource type="Animation" id=16]
 length = 0.133334
 loop = true
 step = 0.0166667
@@ -881,7 +1091,7 @@ tracks/8/keys = {
 "values": [ Vector2( -8, 0 ), Vector2( -8, 1 ), Vector2( -8, 0 ), Vector2( -8, -1 ), Vector2( -8, 0 ) ]
 }
 
-[sub_resource type="Animation" id=16]
+[sub_resource type="Animation" id=17]
 length = 0.400001
 step = 0.0166667
 tracks/0/type = "value"
@@ -1047,16 +1257,16 @@ attenuation = 0.5
 visible = false
 modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 0, -32 )
-scale = Vector2( 3, 3 )
 collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
-launch_distance = 1.5
+damage = 5
+launch_distance = 3.0
 launch_angle = -90.0
 
 [node name="Sprite" type="Sprite" parent="UpTilt"]
 show_behind_parent = true
-scale = Vector2( 0.5, 0.5 )
+scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="UpTilt"]
@@ -1072,7 +1282,7 @@ volume_db = -12.0
 attenuation = 0.5
 
 [node name="Rotation" type="Area2D" parent="."]
-modulate = Color( 1, 1, 1, 0 )
+visible = false
 rotation = -6.28319
 scale = Vector2( 0.6, 0.6 )
 collision_layer = 2
@@ -1105,39 +1315,37 @@ attenuation = 0.5
 
 [node name="Strike" type="Area2D" parent="."]
 visible = false
-modulate = Color( 1, 1, 1, 0 )
-position = Vector2( 80, 0 )
+position = Vector2( -8, -0.738861 )
 scale = Vector2( 3, 3 )
 collision_layer = 2
 collision_mask = 7
 script = ExtResource( 9 )
-damage = 50
-launch_distance = 2.0
+damage = 30
 
 [node name="Sprite" type="Sprite" parent="Strike"]
 position = Vector2( -8, -2 )
-scale = Vector2( 2, 0.25 )
+scale = Vector2( 0.5, 0.25 )
 z_index = 16
 z_as_relative = false
 texture = ExtResource( 4 )
 
 [node name="Sprite3" type="Sprite" parent="Strike"]
 position = Vector2( -8, 2 )
-scale = Vector2( 2, -0.25 )
+scale = Vector2( 0.5, -0.25 )
 z_index = 16
 z_as_relative = false
 texture = ExtResource( 4 )
 
 [node name="Sprite2" type="Sprite" parent="Strike"]
 position = Vector2( 8, -2 )
-scale = Vector2( 1e-05, 0.25 )
+scale = Vector2( -1.5, 0.25 )
 z_index = 16
 z_as_relative = false
 texture = ExtResource( 4 )
 
 [node name="Sprite4" type="Sprite" parent="Strike"]
 position = Vector2( 8, 2 )
-scale = Vector2( 1e-05, -0.25 )
+scale = Vector2( -1.5, -0.25 )
 z_index = 16
 z_as_relative = false
 texture = ExtResource( 4 )
@@ -1166,20 +1374,21 @@ stream = ExtResource( 2 )
 attenuation = 0.5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "idle"
 method_call_mode = 1
 anims/down_blow = SubResource( 9 )
 anims/forward_slash = SubResource( 10 )
-anims/rotation = SubResource( 11 )
-anims/spin = SubResource( 12 )
-anims/strike = SubResource( 13 )
-anims/strike_charge = SubResource( 14 )
-anims/strike_hold = SubResource( 15 )
-anims/up_slash = SubResource( 16 )
+anims/idle = SubResource( 11 )
+anims/rotation = SubResource( 12 )
+anims/spin = SubResource( 13 )
+anims/strike = SubResource( 14 )
+anims/strike_charge = SubResource( 15 )
+anims/strike_hold = SubResource( 16 )
+anims/up_slash = SubResource( 17 )
 
 [node name="Sprite" type="Sprite" parent="."]
-visible = false
-position = Vector2( 9, 21.18 )
-rotation = 1.60556
+position = Vector2( 9.05991e-06, -4.29153e-06 )
+rotation = 0.523598
 scale = Vector2( 0.33, 0.33 )
 z_index = 16
 texture = ExtResource( 3 )

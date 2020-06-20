@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://globals/hitbox.gd" type="Script" id=1]
 [ext_resource path="res://vanilla/weapons/spear/sprite.png" type="Texture" id=2]
@@ -14,15 +14,6 @@
 script/source = "extends Weapon
 
 var release_launch = false
-
-func _ready() -> void:
-	$Heavy.hide()
-	$Glide.hide()
-	$Spear.hide()
-	$Sprite.hide()
-	
-	anim_player = $AnimationPlayer
-	anim_player.connect(\"animation_finished\", self, \"_on_animation_finished\")
 
 func get_attack() -> String:
 	if !user.on_ground:
@@ -43,45 +34,45 @@ func attack(attack_name: String):
 	match attack_name:
 		\"stab_u\":
 			rotation = -PI/2
-			$AnimationPlayer.play(\"stab\")
+			anim_player.play(\"stab\")
 			
 		\"stab_uf\":
 			rotation = -PI/4
-			$AnimationPlayer.play(\"stab\")
+			anim_player.play(\"stab\")
 			
 		\"stab_\", \"stab_f\":
-			$AnimationPlayer.play(\"stab\")
+			anim_player.play(\"stab\")
 			
 		\"stab_df\":
 			rotation = PI/4
-			$AnimationPlayer.play(\"stab\")
+			anim_player.play(\"stab\")
 			
 		\"stab_d\":
 			rotation = PI/2
-			$AnimationPlayer.play(\"stab\")
+			anim_player.play(\"stab\")
 			
 		
 		\"launch\":
 			user.aiming = true
-			$AnimationPlayer.play(\"launch_charge\")
+			anim_player.play(\"launch_charge\")
 			
 		\"glide\":
-			$AnimationPlayer.play(attack_name)
+			anim_player.play(attack_name)
 			user.velocity.y -= 400
 			
 		_:
-			$AnimationPlayer.play(attack_name)
+			anim_player.play(attack_name)
 			
 	
 	
 
 
 func input_released():
-	if $AnimationPlayer.current_animation == \"launch_hold\":
+	if anim_player.current_animation == \"launch_hold\":
 		launch()
 		user.aiming = false
 		
-	elif $AnimationPlayer.current_animation == \"launch_charge\":
+	elif anim_player.current_animation == \"launch_charge\":
 		release_launch = true
 		
 
@@ -94,11 +85,11 @@ func _on_animation_finished(anim_name: String):
 			launch()
 			
 		else:
-			$AnimationPlayer.play(\"launch_hold\")
+			anim_player.play(\"launch_hold\")
 			return
 			
 	
-	emit_signal(\"attack_ended\")
+	._on_animation_finished(anim_name)
 
 func launch():
 	var node = preload(\"res://vanilla/weapons/spear/projectile.tscn\").instance()
@@ -107,7 +98,7 @@ func launch():
 	user.spawn_projectile(node, $Sprite.global_position, direction * 1000)
 	$Sprite.hide()
 	$LaunchSfx.play()
-	emit_signal(\"attack_ended\")
+	end_attack()
 
 "
 
@@ -189,6 +180,71 @@ tracks/4/keys = {
 }
 
 [sub_resource type="Animation" id=7]
+resource_name = "idle"
+length = 0.0166667
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("Heavy:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Glide:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprite:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Heavy:active")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Glide:active")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=8]
 length = 0.500001
 step = 0.0166667
 tracks/0/type = "value"
@@ -228,7 +284,7 @@ tracks/2/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=9]
 length = 0.166667
 loop = true
 step = 0.0166667
@@ -257,7 +313,7 @@ tracks/1/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=10]
 length = 0.2
 step = 0.0166667
 tracks/0/type = "value"
@@ -273,7 +329,7 @@ tracks/0/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=11]
 length = 0.4
 tracks/0/type = "value"
 tracks/0/path = NodePath("Spear/Rotation:rotation_degrees")
@@ -324,7 +380,7 @@ tracks/3/keys = {
 "values": [ true, true ]
 }
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=12]
 length = 0.433334
 step = 0.0166667
 tracks/0/type = "value"
@@ -467,7 +523,6 @@ show_behind_parent = true
 shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="Glide"]
-rotation = 12.5664
 z_index = 16
 z_as_relative = false
 texture = ExtResource( 4 )
@@ -526,18 +581,20 @@ attenuation = 0.5
 
 [node name="Sprite" type="Sprite" parent="."]
 visible = false
-position = Vector2( 8, 0 )
+position = Vector2( 16, 0 )
 rotation = 0.785398
 texture = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "idle"
 playback_process_mode = 0
 method_call_mode = 1
 anims/glide = SubResource( 6 )
-anims/launch_charge = SubResource( 7 )
-anims/launch_hold = SubResource( 8 )
-anims/quick = SubResource( 9 )
-anims/rotation = SubResource( 10 )
-anims/stab = SubResource( 11 )
+anims/idle = SubResource( 7 )
+anims/launch_charge = SubResource( 8 )
+anims/launch_hold = SubResource( 9 )
+anims/quick = SubResource( 10 )
+anims/rotation = SubResource( 11 )
+anims/stab = SubResource( 12 )
 
 [node name="Skeleton" parent="." instance=ExtResource( 10 )]
