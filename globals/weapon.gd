@@ -49,3 +49,6 @@ func can_hit(node: Node) -> bool:
 func clash(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	emit_signal("clashed", user_hitbox, opponent_hitbox)
 	var opponent_weapon = opponent_hitbox.owner
+
+func get_attack_attributes(hitbox: Hitbox):
+	return user.get_attack_attributes(hitbox)

@@ -6,10 +6,10 @@ onready var weapon = owner
 export var active: bool = false setget set_active
 
 export var damage : int = 10
-
 export(float) var launch_distance = 1 setget set_launch_distance
-
 export(float) var launch_angle = 0 setget set_launch_angle
+export var attribute_name : String
+export var attribute_value : int
 
 var exceptions = []
 
@@ -66,6 +66,17 @@ func get_knockback() -> Vector2:
 
 func get_hitlag() -> int:
 	return int(damage * get_knockback().length() * .2)
+
+func get_attributes() -> Dictionary:
+	var attributes = weapon.get_attack_attributes(self)
+	
+	if attribute_name and attribute_value:
+		if attributes.has(attribute_name):
+			attributes[attribute_name] += attribute_value
+		else:
+			attributes[attribute_name] += attribute_value
+	
+	return attributes
 
 func _draw():
 	if Engine.editor_hint:

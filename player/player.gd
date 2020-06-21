@@ -546,6 +546,9 @@ func _on_clashed(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	clash.hitboxes = [user_hitbox, opponent_hitbox]
 	get_parent().add_child(clash)
 
+func get_attack_attributes(hitbox: Hitbox) -> Dictionary:
+	return {}
+
 func damage(hitbox: Hitbox):
 	if invulnerability or dodge_time > dodge_iframes:
 		return
