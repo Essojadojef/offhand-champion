@@ -514,13 +514,22 @@ func buffer_attack(slot: int):
 func perform_attack(slot: int, attack: String):
 	current_attack = attack
 	current_attack_slot = slot
-	weapon_nodes[weapons[slot]].attack(attack)
+	
+	var node = weapon_nodes[weapons[slot]]
+	node.attack(attack)
+	
+	for i in weapons_root.get_children():
+		i.hide()
+	node.show()
 
 func release_attack(slot: int):
 	weapon_nodes[weapons[slot]].input_released()
 
 func _on_attack_ended():
 	current_attack = ""
+	
+	for i in weapons_root.get_children():
+		i.show()
 
 
 
