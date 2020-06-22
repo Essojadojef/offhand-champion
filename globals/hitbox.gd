@@ -50,9 +50,7 @@ func _physics_process(delta):
 	for i in get_overlapping_bodies():
 		if i is Entity and can_hit(i):
 			exceptions.append(i)
-			
-			i.damage(self) # makes the target take damage from this hitbox
-			weapon.emit_signal("hit", i, self) # tells the user that the hit connected
+			weapon.hit(i, self)
 			
 
 func can_hit(entity: Entity):

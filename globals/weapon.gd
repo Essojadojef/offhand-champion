@@ -10,7 +10,7 @@ var skeleton : Node2D
 # properties that can be animated
 export var animate_skeleton = false
 
-signal hit(target, hitbox) # emitted by hitboxes
+signal hit(target, hitbox)
 signal clashed(user_hitbox, opponent_hitbox)
 signal attack_ended()
 
@@ -42,13 +42,17 @@ func end_attack():
 	emit_signal("attack_ended")
 
 
+# functions called by hitboxes
 
 func can_hit(node: Node) -> bool:
 	return user.can_hit(node)
 
+func hit(target, hitbox: Hitbox):
+	target.damage(hitbox)
+	emit_signal("hit", target, hitbox)
+
 func clash(user_hitbox: Hitbox, opponent_hitbox: Hitbox):
 	emit_signal("clashed", user_hitbox, opponent_hitbox)
-	var opponent_weapon = opponent_hitbox.owner
 
 func get_attack_attributes(hitbox: Hitbox):
 	return user.get_attack_attributes(hitbox)
