@@ -27,9 +27,10 @@ func _physics_process(delta):
 		velocity.x -= 32 * sign(distance) - distance
 	
 
-func process_collision(collision: KinematicCollision2D):
+func process_collision(collision: KinematicCollision2D) -> Vector2:
 	if velocity.length() >= 1:
 		velocity = velocity.bounce(collision.normal) * .5
+		return collision.remainder.bounce(collision.normal) * .5
 		
 	else:
 		velocity = velocity.slide(collision.normal)
@@ -37,6 +38,8 @@ func process_collision(collision: KinematicCollision2D):
 		
 		if on_ground:
 			velocity.y = min(velocity.y, 0)
+		
+		return collision.remainder.slide(collision.normal) 
 
 func damage(hitbox):
 	var damage = hitbox.damage

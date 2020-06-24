@@ -47,6 +47,7 @@ var selected_item = -1 # index of currently selected item, -1 when none is selec
 onready var items_root = $Items
 var item_nodes = {} # {WeaponResource : Node}
 
+var walk_speed = 300
 var facing = 1
 var turn_time = 0
 
@@ -232,15 +233,18 @@ func process_hitlag():
 			knockback = Vector2()
 			
 
-func process_collision(collision: KinematicCollision2D):
+func process_collision(collision: KinematicCollision2D) -> Vector2:
 	# overrides Entity's process_collision
 	# called inside Entity's _physics_process only if the player and collides with something
 	
+	var remainder = collision.remainder
+	
 	if stun:
+		remainder = remainder.bounce(collision.normal)
 		velocity = velocity.bounce(collision.normal) * .8
 		
 	else:
-		velocity = velocity.slide(collision.normal)
+		remainder = remainder.slide(collision.normal)
 		
 		on_ground = Vector2.UP.dot(collision.normal) > 0
 		
@@ -250,6 +254,7 @@ func process_collision(collision: KinematicCollision2D):
 		if on_ground:
 			velocity.y = min(velocity.y, 0)
 	
+	return remainder
 
 
 func get_input():
@@ -379,11 +384,17 @@ func process_movement(delta):
 		return
 	
 	if on_ground:
-		velocity.x = directional_input.x * walk_speed * 2
+		velocity.x = directional_input.x * walk_speed
 		
-	else:
-		velocity.x += directional_input.x * max(250 - abs(velocity.x), 0) * 10 * delta
+	elif directional_input.x:
+		var drift = directional_input.x * 10
 		
+		if velocity.x * directional_input.x > 0 and abs(velocity.x) >= 250:
+			drift = 0
+		
+		velocity.x += drift
+		
+	
 
 func process_jump():
 	

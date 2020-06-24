@@ -9,8 +9,6 @@ var initial_forced_velocity = Vector2()
 
 var hitlag : int = 0
 
-var walk_speed = 100
-
 var on_ground = false
 #var on_wall = false
 
@@ -58,9 +56,12 @@ func _physics_process(delta):
 	while collision and collision_count < COLLISION_TESTS :
 		collision_count += 1;
 		
-		process_collision(collision)
+		var remainder = process_collision(collision)
 		
-		collision = move_and_collide(velocity * delta)
+		if !remainder:
+			break
+		
+		collision = move_and_collide(remainder)
 		
 	
 	velocity.y += gravity * delta
@@ -69,9 +70,9 @@ func _physics_process(delta):
 func process_hitlag():
 	hitlag -= 1
 
-func process_collision(collision: KinematicCollision2D):
+func process_collision(collision: KinematicCollision2D) -> Vector2:
 	
-	velocity = velocity.slide(collision.normal)
+	var remainder = collision.remainder.slide(collision.normal)
 	
 	on_ground = Vector2.UP.dot(collision.normal) > 0
 	
@@ -81,6 +82,7 @@ func process_collision(collision: KinematicCollision2D):
 	if on_ground:
 		velocity.y = min(velocity.y, 0)
 	
+	return remainder
 
 func damage(hitbox):
 	velocity = hitbox.get_knockback() * 100
