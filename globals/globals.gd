@@ -1,6 +1,7 @@
 extends Node
 
 var mods = ["vanilla"] # [ String mod_id ]
+var resources = {}
 var weapons = {} # { String id : WeaponResource weapon }
 var items = {} # { String id : WeaponResource item }
 
@@ -27,8 +28,7 @@ func _init() -> void:
 	Input.connect("joy_connection_changed", self, "_on_joy_connection_changed")
 	
 	load_mods()
-	load_weapons()
-	load_items()
+	load_resources("vanilla")
 	randomize()
 
 func load_mods():
@@ -43,59 +43,41 @@ func load_mods():
 		
 		if file.get_extension() == ".pck":
 			print(" " + file)
-			ProjectSettings.load_resource_pack("user://mods/" + file)
+			ProjectSettings.load_resource_pack("user://mods/" + file, false)
 		
 		file = dir.get_next()
 	
-	pass
 
-func load_weapons():
-	print("loading weapons:")
+func load_resources(folder: String):
+	print("loading resources from %s:" % folder)
 	
 	var dir : Directory = Directory.new()
 	
-	for mod in mods:
-		if !dir.dir_exists("res://%s/weapons/" % mod):
-			continue
-		
-		var base_dir = "res://%s/weapons/" % mod
-		
-		dir.open(base_dir)
-		dir.list_dir_begin(true, true)
-		var file = dir.get_next()
-		
-		while file:
-			
-			if file.get_extension() == "tres":
-				var id = mod + ":" + file.get_basename()
-				print(" ", id)
-				weapons[id] = load(base_dir + file)
-			
-			file = dir.get_next()
-
-func load_items():
-	print("loading items:")
+	var base_dir = "res://%s/" % folder
 	
-	var dir : Directory = Directory.new()
+	var error = dir.open(base_dir)
+	if error:
+		return
 	
-	for mod in mods:
-		if !dir.dir_exists("res://%s/items/" % mod):
-			continue
+	dir.list_dir_begin(true, true)
+	var file = dir.get_next()
+	
+	while file:
 		
-		var base_dir = "res://%s/items/" % mod
-		
-		dir.open(base_dir)
-		dir.list_dir_begin(true, true)
-		var file = dir.get_next()
-		
-		while file:
+		if file.get_extension() == "tres":
+			var id = folder + ":" + file.get_basename()
+			print(" ", id)
+			var res = load(base_dir + file)
+			resources[id] = res
 			
-			if file.get_extension() == "tres":
-				var id = mod + ":" + file.get_basename()
-				print(" ", id)
-				items[id] = load(base_dir + file)
+			if res is WeaponResource:
+				if res.is_item:
+					items[id] = res
+				else:
+					weapons[id] = res
 			
-			file = dir.get_next()
+		
+		file = dir.get_next()
 
 
 func get_weapon(id: String) -> WeaponResource:
@@ -107,6 +89,11 @@ func get_item(id: String) -> WeaponResource:
 	if id.find(":") == -1:
 		id = "vanilla:" + id
 	return items[id]
+
+func get_resource(id: String):
+	if id.find(":") == -1:
+		id = "vanilla:" + id
+	return resources[id]
 
 
 func _unhandled_input(event: InputEvent) -> void:

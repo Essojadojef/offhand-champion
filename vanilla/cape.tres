@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=4 format=2]
+
+[ext_resource path="res://globals/weapon_resource.gd" type="Script" id=1]
+[ext_resource path="res://vanilla/items/cape/cape.png" type="Texture" id=2]
+[ext_resource path="res://vanilla/items/cape/cape.tscn" type="PackedScene" id=3]
+
+[resource]
+script = ExtResource( 1 )
+level = 2
+icon = ExtResource( 2 )
+entity_scene = ExtResource( 3 )
+is_item = true
